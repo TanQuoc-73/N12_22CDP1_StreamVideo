@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Client_StreamLAN/Client_StreamLAN.csproj" />
+  <Project Path="N12_StreamLAN/Server_StreamLAN.csproj" />
+</Solution>
