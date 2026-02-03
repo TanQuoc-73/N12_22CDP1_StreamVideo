@@ -1,0 +1,22 @@
+﻿<Window x:Class="Client_StreamLAN.Views.LoginForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client_StreamLAN.Views"
+        mc:Ignorable="d"
+        Title="LoginForm" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="AliceBlue">
+        <Button Content="Đăng nhập&#xD;&#xA;" Margin="306,330,306,56" Click="Login_Btn_Click"/>
+        
+        <TextBlock TextWrapping="Wrap" Text="Email" Margin="274,129,462,252" RenderTransformOrigin="0.492,0.657"/>
+        <TextBlock TextWrapping="Wrap" Text="PassWord" Margin="274,204,462,176"/>
+        
+        <TextBox x:Name="txt_Email"
+            TextWrapping="Wrap" Text="Nhập tài khoản email" Margin="375,129,221,252"/>
+        <PasswordBox x:Name="txt_Password"
+            HorizontalAlignment="Left" Margin="375,187,0,0" VerticalAlignment="Top" Width="204" Height="54"/>
+
+    </Grid>
+</Window>
