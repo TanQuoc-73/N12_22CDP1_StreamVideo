@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
+
+
 namespace Client_StreamLAN.Views
 {
     public partial class MainWindow : System.Windows.Window
@@ -45,6 +47,9 @@ namespace Client_StreamLAN.Views
                     Mat frame = _camera.GetFrame();
                     if (frame != null)
                     {
+                        Cv2.ImEncode(".jpg", frame, out byte[] buffer);
+                        _sender.Send(buffer);
+
                         var bitmap = ImgConverter.ToBitmapSource(frame);
                         Dispatcher.Invoke(() =>
                         {
