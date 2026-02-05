@@ -10,6 +10,10 @@
     <Grid>
         <TextBlock x:Name="txtUserEmail"
             TextWrapping="Wrap" Text="TextBlock" Margin="291,32,10,323"/>
-
+        <Image x:Name="imgCamera"
+               Stretch="Uniform"
+            Margin="101,86,114,46">
+            
+        </Image>
     </Grid>
 </Window>
