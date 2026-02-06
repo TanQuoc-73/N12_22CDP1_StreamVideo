@@ -22,10 +22,10 @@ namespace Client_StreamLAN.Views
         {
             InitializeComponent();
 
-            // BYPASS LOGIN CHO TEST
+            // TEST :
             // if (!UserSession.IsLoggedIn)
             // {
-            //     MessageBox.Show("Chưa đăng nhập");
+            //     MessageBox.Show("Chua dang nhap");
             //     this.Close();
             //     return;
             // }
