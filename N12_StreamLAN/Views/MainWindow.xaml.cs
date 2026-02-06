@@ -13,13 +13,24 @@ namespace Server_StreamLAN.Views
 
         private UdpReceiver _receiver;
         private CancellationTokenSource _cts;
-        
+        private DiscoveryService _discovery;
+
         public MainWindow()
         {
+            
+
             InitializeComponent();
+
+
+            txtLocalIp.Text = NetworkInfo.GetLocalIPv4() ?? "Khong xac dinh duoc IPv4";
+
+
             _receiver = new UdpReceiver(9000);
             _cts = new CancellationTokenSource();
-            
+
+            _discovery = new DiscoveryService();
+            _discovery.Start();
+
             System.Windows.MessageBox.Show("Server khoi dong o port 9000...", "Debug Info");
             
             StartReceiveLoop();

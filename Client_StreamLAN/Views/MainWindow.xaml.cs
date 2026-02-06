@@ -1,6 +1,7 @@
 ﻿using Client_StreamLAN.Services;
 using Client_StreamLAN.Utils;
 using OpenCvSharp;
+using OpenCvSharp.Internal.Vectors;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -11,6 +12,14 @@ using System.Windows;
 
 namespace Client_StreamLAN.Views
 {
+    public class ServerInfo
+    {
+        public string Name { get; set; }
+        public string Ip { get; set; }
+        public int Port { get; set; }
+
+        public override string ToString() => $"{Name} - {Ip}:{Port}";
+    }
     public partial class MainWindow : System.Windows.Window
     {
         private CameraService _camera;
@@ -29,6 +38,9 @@ namespace Client_StreamLAN.Views
             //     this.Close();
             //     return;
             // }
+
+
+            txtLocalIp.Text = NetworkInfo.GetLocalIPv4() ?? "Khong xac dinh duoc IPv4";
 
             txtUserEmail.Text = $"User: TEST_MODE";
 
@@ -49,6 +61,8 @@ namespace Client_StreamLAN.Views
                 MessageBox.Show($"Loi khoi dong:\n{ex.Message}", "Error");
                 this.Close();
             }
+
+
         }
 
         private void StartCameraLoop()
@@ -155,6 +169,26 @@ namespace Client_StreamLAN.Views
             _camera.Stop();
             base.OnClosed(e);
         }
+
+        private async void BtnDiscover_Click(object sender, RoutedEventArgs e)
+        {
+            var discovery = new ServerDiscovery();
+            var servers = await discovery.DiscoverAsync();
+
+            cbServers.ItemsSource = servers;
+        }
+
+        
+
+        private void CbServers_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (cbServers.SelectedItem is ServerInfo s)
+            {
+                _sender = new UdpSender(s.Ip, s.Port);
+                MessageBox.Show($"Da chon server: {s.Ip}:{s.Port}");
+            }
+        }
+
 
     }
 }

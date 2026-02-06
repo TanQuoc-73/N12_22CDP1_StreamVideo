@@ -9,8 +9,13 @@
     <Grid>
         <Image x:Name="imgCamera"
                Stretch="Uniform"
-               Margin="188,170,188,21">
-            
+               Margin="186,106,186,11">
         </Image>
+        <TextBlock x:Name="txtLocalIp"
+            HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="57" Width="442"/>
+
+
+        
+
     </Grid>
 </Window>

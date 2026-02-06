@@ -9,11 +9,20 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock x:Name="txtUserEmail"
-            TextWrapping="Wrap" Text="TextBlock" Margin="291,32,10,344"/>
+            TextWrapping="Wrap" Text="TextBlock" Margin="400,16,10,360"/>
         <Image x:Name="imgCamera"
                Stretch="Uniform"
-            Margin="101,86,114,46">
+            Margin="348,134,16,20">
             
         </Image>
+        <TextBlock x:Name="txtLocalIp"
+            TextWrapping="Wrap" Text="" Margin="400,74,10,296"/>
+
+        <StackPanel Orientation="Horizontal" Margin="10,10,10,360">
+            <Button Content="Tìm server" Click="BtnDiscover_Click" Margin="0,0,10,0"/>
+            <ComboBox x:Name="cbServers"
+              SelectionChanged="CbServers_SelectionChanged"
+              Width="250"/>
+        </StackPanel>
     </Grid>
 </Window>
