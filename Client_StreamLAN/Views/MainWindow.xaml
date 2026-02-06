@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <TextBlock x:Name="txtUserEmail"
-            TextWrapping="Wrap" Text="TextBlock" Margin="291,32,10,323"/>
+            TextWrapping="Wrap" Text="TextBlock" Margin="291,32,10,344"/>
         <Image x:Name="imgCamera"
                Stretch="Uniform"
             Margin="101,86,114,46">

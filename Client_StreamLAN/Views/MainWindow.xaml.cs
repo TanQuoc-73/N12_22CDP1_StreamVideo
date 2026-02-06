@@ -36,17 +36,17 @@ namespace Client_StreamLAN.Views
             {
                 _camera = new CameraService();
                 _camera.Start();
-                MessageBox.Show("Camera đã khởi động thành công!", "Debug Info");
+                MessageBox.Show("Camera da khoi dong", "Debug Info");
                 
                 _sender = new UdpSender("127.0.0.1", 9000);
-                MessageBox.Show("UDP Sender đã tạo (port 9000)", "Debug Info");
+                MessageBox.Show("UDP Sender duoc tao (port 9000)", "Debug Info");
 
                 _cts = new CancellationTokenSource();
                 StartCameraLoop();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"LỖI khởi động:\n{ex.Message}", "Error");
+                MessageBox.Show($"Loi khoi dong:\n{ex.Message}", "Error");
                 this.Close();
             }
         }
@@ -68,7 +68,7 @@ namespace Client_StreamLAN.Views
                             using var resized = new Mat();
                             Cv2.Resize(frame, resized, new OpenCvSharp.Size(640, 480));
                             
-                            // GIẢM JPEG QUALITY để đảm bảo < 60KB
+                            //JPEG QUALITY < 60KB
                             var encodeParams = new[] { (int)ImwriteFlags.JpegQuality, 50 };
                             Cv2.ImEncode(".jpg", resized, out byte[] buffer, encodeParams);
                             
@@ -76,11 +76,11 @@ namespace Client_StreamLAN.Views
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    MessageBox.Show($"✅ Frame đầu tiên: {buffer.Length} bytes (max 60KB)", "Debug Info");
+                                    MessageBox.Show($"Frame dau tien: {buffer.Length} bytes (max 60KB)", "Debug Info");
                                 });
                             }
                             
-                            // SAFETY CHECK: Chỉ gửi nếu < 60KB
+                            // Chỉ gửi nếu JPEG QUALITY< 60KB
                             if (buffer.Length < 60000)
                             {
                                 _sender.Send(buffer);
@@ -91,7 +91,7 @@ namespace Client_StreamLAN.Views
                                 {
                                     Dispatcher.Invoke(() =>
                                     {
-                                        MessageBox.Show($"⚠️ Frame quá lớn: {buffer.Length} bytes, giảm quality!", "Warning");
+                                        MessageBox.Show($"Frame qua lon: {buffer.Length} bytes, giam quality", "Warning");
                                     });
                                 }
                             }
@@ -100,14 +100,14 @@ namespace Client_StreamLAN.Views
                             
                             if (bitmap != null)
                             {
-                                bitmap.Freeze(); // CRITICAL: Freeze để use cross-thread
+                                bitmap.Freeze();
                                 Dispatcher.Invoke(() =>
                                 {
                                     imgCamera.Source = bitmap;
                                     
                                     if (frameCount == 1)
                                     {
-                                        MessageBox.Show($"✅ Bitmap set vào UI! Size: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
+                                        MessageBox.Show($"Bitmap da set vao UI: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
                                     }
                                 });
                             }
@@ -117,7 +117,7 @@ namespace Client_StreamLAN.Views
                                 {
                                     Dispatcher.Invoke(() =>
                                     {
-                                        MessageBox.Show("❌ Bitmap NULL!", "Error");
+                                        MessageBox.Show("Bitmap NULL!", "Error");
                                     });
                                 }
                             }
@@ -130,7 +130,7 @@ namespace Client_StreamLAN.Views
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    MessageBox.Show("Frame NULL hoặc EMPTY!", "Error");
+                                    MessageBox.Show("Frame NULL hoac EMPTY!", "Error");
                                 });
                             }
                         }
@@ -139,7 +139,7 @@ namespace Client_StreamLAN.Views
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            MessageBox.Show($"LỖI trong loop:\n{ex.Message}", "Error");
+                            MessageBox.Show($"Loi loop:\n{ex.Message}", "Error");
                         });
                         break;
                     }

@@ -10,11 +10,11 @@
     <Grid Background="AliceBlue">
         <Button Content="Đăng nhập&#xD;&#xA;" Margin="306,330,306,56" Click="Login_Btn_Click"/>
         
-        <TextBlock TextWrapping="Wrap" Text="Email" Margin="274,129,462,252" RenderTransformOrigin="0.492,0.657"/>
-        <TextBlock TextWrapping="Wrap" Text="PassWord" Margin="274,204,462,176"/>
+        <TextBlock TextWrapping="Wrap" Text="Email" Margin="274,129,430,252" RenderTransformOrigin="0.492,0.657"/>
+        <TextBlock TextWrapping="Wrap" Text="PassWord" Margin="274,204,430,176"/>
         
         <TextBox x:Name="txt_Email"
-            TextWrapping="Wrap" Text="Nhập tài khoản email" Margin="375,129,221,252"/>
+            TextWrapping="Wrap" Text="" Margin="375,129,221,252"/>
         <PasswordBox x:Name="txt_Password"
             HorizontalAlignment="Left" Margin="375,187,0,0" VerticalAlignment="Top" Width="204" Height="54"/>
 

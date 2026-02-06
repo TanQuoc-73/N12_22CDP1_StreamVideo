@@ -20,7 +20,7 @@ namespace Server_StreamLAN.Views
             _receiver = new UdpReceiver(9000);
             _cts = new CancellationTokenSource();
             
-            System.Windows.MessageBox.Show("✅ Server đã khởi động! Đang lắng nghe port 9000...", "Debug Info");
+            System.Windows.MessageBox.Show("Server khoi dong o port 9000...", "Debug Info");
             
             StartReceiveLoop();
         }
@@ -42,7 +42,7 @@ namespace Server_StreamLAN.Views
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                System.Windows.MessageBox.Show($"✅ Frame đầu tiên nhận được: {data.Length} bytes", "Debug Info");
+                                System.Windows.MessageBox.Show($"Frame dau tien nhan: {data.Length} bytes", "Debug Info");
                             });
                         }
                         
@@ -54,14 +54,14 @@ namespace Server_StreamLAN.Views
                             
                             if (bitmap != null)
                             {
-                                bitmap.Freeze(); // CRITICAL: Freeze để use cross-thread
+                                bitmap.Freeze();
                                 Dispatcher.Invoke(() =>
                                 {
                                     imgCamera.Source = bitmap;
                                     
                                     if (frameCount == 1)
                                     {
-                                        System.Windows.MessageBox.Show($"✅ Bitmap set vào UI! Size: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
+                                        System.Windows.MessageBox.Show($"Bitmap set vao UI: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
                                     }
                                 });
                             }
@@ -72,7 +72,7 @@ namespace Server_StreamLAN.Views
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    System.Windows.MessageBox.Show("❌ Decode frame FAILED!", "Error");
+                                    System.Windows.MessageBox.Show("Decode frame FAILED!", "Error");
                                 });
                             }
                         }
@@ -81,7 +81,7 @@ namespace Server_StreamLAN.Views
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            System.Windows.MessageBox.Show($"❌ LỖI nhận frame:\n{ex.Message}", "Error");
+                            System.Windows.MessageBox.Show($"Loi nhan frame:\n{ex.Message}", "Error");
                         });
                     }
                 }
