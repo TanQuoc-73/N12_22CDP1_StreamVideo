@@ -23,7 +23,7 @@ namespace Server_StreamLAN.Services
                     var result = await _udp.ReceiveAsync();
                     string msg = Encoding.UTF8.GetString(result.Buffer);
 
-                    if (msg =="DISCOVER_STREAMLAN_SERVER")
+                    if (msg == "DISCOVER_SERVER")
                     {
                         string reply = "SERVER_HERE|StreamServer|9000";
                         byte[] data = Encoding.UTF8.GetBytes(reply);

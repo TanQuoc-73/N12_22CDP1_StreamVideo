@@ -1,21 +1,153 @@
-﻿<Window x:Class="Server_StreamLAN.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Server_StreamLAN.Views"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Image x:Name="imgCamera"
-               Stretch="Uniform"
-               Margin="186,106,186,11">
-        </Image>
-        <TextBlock x:Name="txtLocalIp"
-            HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="57" Width="442"/>
-
-
-        
-
-    </Grid>
+﻿<Window x:Class="Server_StreamLAN.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:Server_StreamLAN.Views" mc:Ignorable="d" Title="StreamLAN Server" Height="650" Width="1000" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" Background="Transparent">
+    <Window.Resources><!-- Modern Button Style -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#0f3460"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#16213e"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style><!-- Card Panel Style -->
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background" Value="#16213e"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" BlurRadius="15" ShadowDepth="5" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style><!-- Info Text Style -->
+        <Style x:Key="InfoText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#22c55e"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style><!-- Label Text Style -->
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#94a3b8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style><!-- Title Text Style -->
+        <Style x:Key="TitleText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style><!-- Window Control Button Style -->
+        <Style x:Key="WindowControlButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0f3460"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style><!-- Close Button Style (Red hover) -->
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource WindowControlButton}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#e94560"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources><!-- Outer border for window appearance -->
+    <Border Background="Transparent" BorderBrush="#0f3460" BorderThickness="1" CornerRadius="10">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="0" Opacity="0.5"/>
+        </Border.Effect>
+        <Grid><!-- Background Gradient -->
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#1a1a2e" Offset="0"/>
+                    <GradientStop Color="#0f3460" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions><!-- Custom Title Bar -->
+            <Border Grid.Row="0" Background="#0d1117" CornerRadius="10,10,0,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid Height="35">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions><!-- App Title -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
+                        <TextBlock Text="🖥️ " FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="StreamLAN Server" Foreground="White" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel><!-- Window Controls -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="−" Click="MinimizeButton_Click" Style="{StaticResource WindowControlButton}"/>
+                        <Button x:Name="MaximizeButton" Content="□" Click="MaximizeButton_Click" Style="{StaticResource WindowControlButton}"/>
+                        <Button Content="✕" Click="CloseButton_Click" Style="{StaticResource CloseButton}"/>
+                    </StackPanel>
+                </Grid>
+            </Border><!-- Main Content -->
+            <Grid Grid.Row="1" Margin="20,10,20,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions><!-- Header Section -->
+                <Border Grid.Row="0" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="StreamLAN Server" Style="{StaticResource TitleText}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🌐 " FontSize="14" Foreground="#94a3b8"/>
+                            <TextBlock Text="Server IP: " Foreground="#94a3b8" FontSize="12"/>
+                            <TextBlock x:Name="txtLocalIp" Text="" Style="{StaticResource InfoText}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Ellipse Width="12" Height="12" Fill="#22c55e" Margin="0,0,10,0"/>
+                            <TextBlock Text="Listening on port 9000 (Video) and 9001 (Discovery)" Foreground="#94a3b8" FontSize="12"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border><!-- Camera Feed Section -->
+                <Border Grid.Row="1" Style="{StaticResource CardPanel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions><!-- Camera Feed Title -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                            <Ellipse Width="12" Height="12" Fill="#22c55e" Margin="0,0,10,0"/>
+                            <TextBlock Text="Incoming Stream" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel><!-- Camera Display -->
+                        <Border Grid.Row="1" Background="#0d1117" CornerRadius="8" BorderBrush="#0f3460" BorderThickness="2">
+                            <Image x:Name="imgCamera" Stretch="Uniform" Margin="5"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

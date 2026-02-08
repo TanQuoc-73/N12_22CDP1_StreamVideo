@@ -165,9 +165,51 @@ namespace Client_StreamLAN.Views
 
         protected override void OnClosed(System.EventArgs e)
         {
-            _cts.Cancel();
-            _camera.Stop();
+            _cts?.Cancel();
+            _camera?.Stop();
             base.OnClosed(e);
+        }
+
+        // Window control handlers
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                // Double-click to maximize/restore
+                MaximizeRestoreWindow();
+            }
+            else
+            {
+                // Single click to drag
+                this.DragMove();
+            }
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            MaximizeRestoreWindow();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MaximizeRestoreWindow()
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+            }
         }
 
         private async void BtnDiscover_Click(object sender, RoutedEventArgs e)

@@ -104,5 +104,47 @@ namespace Server_StreamLAN.Views
             _cts?.Cancel();
             base.OnClosed(e);
         }
+
+        // Window control handlers
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                // Double-click to maximize/restore
+                MaximizeRestoreWindow();
+            }
+            else
+            {
+                // Single click to drag
+                this.DragMove();
+            }
+        }
+
+        private void MinimizeButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            this.WindowState = System.Windows.WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MaximizeRestoreWindow();
+        }
+
+        private void CloseButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MaximizeRestoreWindow()
+        {
+            if (this.WindowState == System.Windows.WindowState.Maximized)
+            {
+                this.WindowState = System.Windows.WindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = System.Windows.WindowState.Maximized;
+            }
+        }
     }
 }
