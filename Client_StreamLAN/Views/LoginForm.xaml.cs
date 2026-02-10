@@ -32,10 +32,23 @@ namespace Client_StreamLAN.Views
             else
             {
                 MessageBox.Show("Dang nhap that bai");
-
             }
         }
 
+        // Window control handlers
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
 
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
