@@ -31,7 +31,7 @@ namespace Server_StreamLAN.Views
             _discovery = new DiscoveryService();
             _discovery.Start();
 
-            System.Windows.MessageBox.Show("Server khoi dong o port 9000...", "Debug Info");
+
             
             StartReceiveLoop();
         }
@@ -49,13 +49,7 @@ namespace Server_StreamLAN.Views
                         
                         frameCount++;
                         
-                        if (frameCount == 1)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                System.Windows.MessageBox.Show($"Frame dau tien nhan: {data.Length} bytes", "Debug Info");
-                            });
-                        }
+
                         
                         using Mat frame = Cv2.ImDecode(data, ImreadModes.Color);
                         
@@ -70,30 +64,14 @@ namespace Server_StreamLAN.Views
                                 {
                                     imgCamera.Source = bitmap;
                                     
-                                    if (frameCount == 1)
-                                    {
-                                        System.Windows.MessageBox.Show($"Bitmap set vao UI: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
-                                    }
+
                                 });
                             }
                         }
-                        else
-                        {
-                            if (frameCount == 1)
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    System.Windows.MessageBox.Show("Decode frame FAILED!", "Error");
-                                });
-                            }
-                        }
+
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Dispatcher.Invoke(() =>
-                        {
-                            System.Windows.MessageBox.Show($"Loi nhan frame:\n{ex.Message}", "Error");
-                        });
                     }
                 }
             });

@@ -13,17 +13,16 @@ namespace Client_StreamLAN.Views
             InitializeComponent();
         }
 
-        private async void Login_Btn_Click(object sender, RoutedEventArgs e)
+        private void Login_Btn_Click(object sender, RoutedEventArgs e)
         {
-            var auth = new SupabaseAuthService();
+            string email = txt_Email.Text.Trim();
+            string password = txt_Password.Password;
 
-            bool ok = await auth.LoginAsync(
-                txt_Email.Text,
-                txt_Password.Password
-                );
-
-            if (ok)
+            if (email == "test@test.com" && password == "123456")
             {
+                UserSession.AccessToken = "test-token";
+                UserSession.UserEmail = email;
+
                 MessageBox.Show("Dang nhap thanh cong");
                 MainWindow mainWindow = new MainWindow();
                 mainWindow.Show();
@@ -31,7 +30,7 @@ namespace Client_StreamLAN.Views
             }
             else
             {
-                MessageBox.Show("Dang nhap that bai");
+                MessageBox.Show("Sai tai khoan hoac mat khau.\nTai khoan test: test@test.com / 123456");
             }
         }
 

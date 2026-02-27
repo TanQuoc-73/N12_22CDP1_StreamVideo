@@ -48,17 +48,16 @@ namespace Client_StreamLAN.Views
             {
                 _camera = new CameraService();
                 _camera.Start();
-                MessageBox.Show("Camera da khoi dong", "Debug Info");
+
                 
                 _sender = new UdpSender("127.0.0.1", 9000);
-                MessageBox.Show("UDP Sender duoc tao (port 9000)", "Debug Info");
+
 
                 _cts = new CancellationTokenSource();
                 StartCameraLoop();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Loi khoi dong:\n{ex.Message}", "Error");
                 this.Close();
             }
 
@@ -86,29 +85,14 @@ namespace Client_StreamLAN.Views
                             var encodeParams = new[] { (int)ImwriteFlags.JpegQuality, 50 };
                             Cv2.ImEncode(".jpg", resized, out byte[] buffer, encodeParams);
                             
-                            if (frameCount == 1)
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    MessageBox.Show($"Frame dau tien: {buffer.Length} bytes (max 60KB)", "Debug Info");
-                                });
-                            }
+
                             
                             // Chỉ gửi nếu JPEG QUALITY< 60KB
                             if (buffer.Length < 60000)
                             {
                                 _sender.Send(buffer);
                             }
-                            else
-                            {
-                                if (frameCount == 1)
-                                {
-                                    Dispatcher.Invoke(() =>
-                                    {
-                                        MessageBox.Show($"Frame qua lon: {buffer.Length} bytes, giam quality", "Warning");
-                                    });
-                                }
-                            }
+
 
                             var bitmap = ImgConverter.ToBitmapSource(resized);
                             
@@ -119,42 +103,17 @@ namespace Client_StreamLAN.Views
                                 {
                                     imgCamera.Source = bitmap;
                                     
-                                    if (frameCount == 1)
-                                    {
-                                        MessageBox.Show($"Bitmap da set vao UI: {imgCamera.ActualWidth}x{imgCamera.ActualHeight}", "Debug Info");
-                                    }
+
                                 });
                             }
-                            else
-                            {
-                                if (frameCount == 1)
-                                {
-                                    Dispatcher.Invoke(() =>
-                                    {
-                                        MessageBox.Show("Bitmap NULL!", "Error");
-                                    });
-                                }
-                            }
+
                             
                             frame.Dispose();
                         }
-                        else
-                        {
-                            if (frameCount == 0)
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    MessageBox.Show("Frame NULL hoac EMPTY!", "Error");
-                                });
-                            }
-                        }
+
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Dispatcher.Invoke(() =>
-                        {
-                            MessageBox.Show($"Loi loop:\n{ex.Message}", "Error");
-                        });
                         break;
                     }
 
@@ -227,7 +186,7 @@ namespace Client_StreamLAN.Views
             if (cbServers.SelectedItem is ServerInfo s)
             {
                 _sender = new UdpSender(s.Ip, s.Port);
-                MessageBox.Show($"Da chon server: {s.Ip}:{s.Port}");
+
             }
         }
 
