@@ -1,0 +1,225 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Color Palette -->
+    <Color x:Key="AutumnBgStartColor">#FAEBD7</Color> <!-- Antique White -->
+    <Color x:Key="AutumnBgEndColor">#E2C290</Color>   <!-- Warm Golden Beige -->
+    <Color x:Key="AutumnPanelColor">#FFF8DC</Color>   <!-- Cornsilk / Soft Beige -->
+    <Color x:Key="AutumnAccentColor">#D2691E</Color>  <!-- Chocolate Orange -->
+    <Color x:Key="AutumnAccentHoverColor">#E67E22</Color> <!-- Brighter Hover Orange -->
+    <Color x:Key="AutumnSecondaryColor">#CD5C5C</Color> <!-- Autumn Red -->
+    <Color x:Key="AutumnSecondaryHoverColor">#D96E6E</Color> <!-- Brighter Hover Red -->
+    <Color x:Key="AutumnTextPrimaryColor">#3E2723</Color> <!-- Dark Brown -->
+    <Color x:Key="AutumnTextSecondaryColor">#5D4037</Color> <!-- Medium Brown -->
+    <Color x:Key="AutumnTextAccentColor">#FFFFFF</Color> <!-- White -->
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="AutumnPanelBrush" Color="{StaticResource AutumnPanelColor}" />
+    <SolidColorBrush x:Key="AutumnAccentBrush" Color="{StaticResource AutumnAccentColor}" />
+    <SolidColorBrush x:Key="AutumnSecondaryBrush" Color="{StaticResource AutumnSecondaryColor}" />
+    <SolidColorBrush x:Key="AutumnTextPrimaryBrush" Color="{StaticResource AutumnTextPrimaryColor}" />
+    <SolidColorBrush x:Key="AutumnTextSecondaryBrush" Color="{StaticResource AutumnTextSecondaryColor}" />
+    <SolidColorBrush x:Key="AutumnTextAccentBrush" Color="{StaticResource AutumnTextAccentColor}" />
+
+    <!-- Background Gradient (Autumn Sunset / Blurred Leaves Feel) -->
+    <LinearGradientBrush x:Key="AutumnWindowBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource AutumnBgStartColor}" Offset="0.0"/>
+        <GradientStop Color="#F5DEB3" Offset="0.5"/> <!-- Wheat -->
+        <GradientStop Color="{StaticResource AutumnBgEndColor}" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- Drop Shadows -->
+    <DropShadowEffect x:Key="AutumnSubtleShadow" BlurRadius="12" ShadowDepth="2" Opacity="0.10" Color="#2E1A11" />
+    <DropShadowEffect x:Key="AutumnButtonShadow" BlurRadius="8" ShadowDepth="2" Opacity="0.15" Color="#3E2723" />
+
+    <!-- Window Style -->
+    <Style x:Key="AutumnWindowStyle" TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource AutumnWindowBackground}" />
+        <Setter Property="FontFamily" Value="Segoe UI, Tahoma, sans-serif" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextPrimaryBrush}" />
+    </Style>
+
+    <!-- TextBlock Styles -->
+    <Style x:Key="AutumnTitleText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextPrimaryBrush}" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <Style x:Key="AutumnHeaderText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextPrimaryBrush}" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <Style x:Key="AutumnBodyText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextSecondaryBrush}" />
+    </Style>
+
+    <Style x:Key="AutumnStatusText" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnSecondaryBrush}" />
+    </Style>
+
+    <!-- Panel (Card) Style for Server/Client sections -->
+    <Style x:Key="AutumnCardPanel" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource AutumnPanelBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="Effect" Value="{StaticResource AutumnSubtleShadow}" />
+    </Style>
+
+    <!-- Video Preview Container Style -->
+    <Style x:Key="AutumnVideoContainer" TargetType="Border">
+        <Setter Property="Background" Value="#1A110D" /> <!-- Very Dark Brown for high video contrast -->
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="{StaticResource AutumnAccentBrush}" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="Effect" Value="{StaticResource AutumnSubtleShadow}" />
+    </Style>
+
+    <!-- Primary Button Style (Start Server / Start Client / Stream) -->
+    <Style TargetType="Button" x:Key="AutumnPrimaryButton">
+        <Setter Property="Background" Value="{StaticResource AutumnAccentBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextAccentBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Effect="{StaticResource AutumnButtonShadow}"
+                            BorderThickness="0">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{StaticResource AutumnAccentHoverColor}" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#B85A18" /> <!-- Darker pressed orange -->
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="border" Property="Effect" Value="{x:Null}" /> <!-- Depress effect -->
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform Y="1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="#E0D4C8" />
+                            <Setter Property="Foreground" Value="#9C8B7F" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Secondary Button Style (Stop, Disconnect, Clear) -->
+    <Style TargetType="Button" x:Key="AutumnSecondaryButton">
+        <Setter Property="Background" Value="{StaticResource AutumnSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextAccentBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Effect="{StaticResource AutumnButtonShadow}"
+                            BorderThickness="0">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{StaticResource AutumnSecondaryHoverColor}" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#A52A2A" /> <!-- Darker pressed red -->
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="border" Property="Effect" Value="{x:Null}" />
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform Y="1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="#E0D4C8" />
+                            <Setter Property="Foreground" Value="#9C8B7F" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TextBox Style for IPs, Ports, Configuration -->
+    <Style TargetType="TextBox" x:Key="AutumnTextBox">
+        <Setter Property="Background" Value="#FFFFFF" />
+        <Setter Property="Foreground" Value="{StaticResource AutumnTextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="#D2B48C" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AutumnAccentBrush}" />
+                            <Setter TargetName="border" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
