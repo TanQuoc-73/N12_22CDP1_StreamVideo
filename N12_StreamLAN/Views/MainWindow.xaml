@@ -1,4 +1,4 @@
-﻿<Window x:Class="Server_StreamLAN.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:Server_StreamLAN.Views" mc:Ignorable="d" Title="StreamLAN Server" Height="650" Width="1000" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" Background="Transparent">
+<Window x:Class="Server_StreamLAN.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:Server_StreamLAN.Views" mc:Ignorable="d" Title="StreamLAN Server" Height="650" Width="1000" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResize" Background="Transparent">
     <Window.Resources>
         <!-- Window Control Button Style -->
         <Style x:Key="WindowControlButton" TargetType="Button">
@@ -56,14 +56,14 @@
                     </Grid.ColumnDefinitions>
                     <!-- App Title -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
-                        <TextBlock Text="🖥️ " FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <TextBlock Text="StreamLAN Server" Foreground="White" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
                     <!-- Window Controls -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="−" Click="MinimizeButton_Click" Style="{StaticResource WindowControlButton}"/>
-                        <Button x:Name="MaximizeButton" Content="□" Click="MaximizeButton_Click" Style="{StaticResource WindowControlButton}"/>
-                        <Button Content="✕" Click="CloseButton_Click" Style="{StaticResource CloseButton}"/>
+                        <Button Content="&#xE921;" FontFamily="Segoe MDL2 Assets" Click="MinimizeButton_Click" Style="{StaticResource WindowControlButton}"/>
+                        <Button x:Name="MaximizeButton" Content="&#xE922;" FontFamily="Segoe MDL2 Assets" Click="MaximizeButton_Click" Style="{StaticResource WindowControlButton}"/>
+                        <Button Content="&#xE8BB;" FontFamily="Segoe MDL2 Assets" Click="CloseButton_Click" Style="{StaticResource CloseButton}"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -78,7 +78,7 @@
                     <StackPanel>
                         <TextBlock Text="StreamLAN Server" Style="{StaticResource AutumnTitleText}"/>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🌐 " FontSize="14" Foreground="#94a3b8"/>
+                            <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#94a3b8" Margin="0,0,6,0"/>
                             <TextBlock Text="Server IP: " Style="{StaticResource AutumnBodyText}"/>
                             <TextBlock x:Name="txtLocalIp" Text="" Style="{StaticResource AutumnStatusText}"/>
                         </StackPanel>
@@ -95,10 +95,27 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <!-- Camera Feed Title -->
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-                            <Ellipse Width="12" Height="12" Fill="{StaticResource AutumnAccentBrush}" Margin="0,0,10,0"/>
-                            <TextBlock Text="Incoming Stream" Style="{StaticResource AutumnHeaderText}"/>
+                        <!-- Camera Feed Title + Toolbar -->
+                        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Ellipse Width="12" Height="12" Fill="{StaticResource AutumnAccentBrush}" Margin="0,0,10,0"/>
+                                <TextBlock Text="Incoming Stream" Style="{StaticResource AutumnHeaderText}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="btnRecord" Click="BtnRecord_Click" Padding="12,6" Margin="0,0,10,0" Cursor="Hand" Background="{StaticResource AutumnAccentBrush}" Foreground="White" BorderThickness="0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="btnRecordIcon" Text="&#xE1C4;" FontFamily="Segoe MDL2 Assets" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock x:Name="btnRecordText" Text="Record" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <ToggleButton x:Name="btnFaceDetection" Padding="12,6" Margin="0,0,10,0" Cursor="Hand" Background="#E0E0E0" Foreground="#333" BorderThickness="0" Checked="BtnFaceDetection_Changed" Unchecked="BtnFaceDetection_Changed">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Face Detection" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </ToggleButton>
+                                <TextBlock x:Name="txtRecordingStatus" Text="Idle" VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}" Margin="8,0,0,0"/>
+                            </StackPanel>
                         </StackPanel>
                         <!-- Camera Display -->
                         <Border Grid.Row="1" Style="{StaticResource AutumnVideoContainer}">
