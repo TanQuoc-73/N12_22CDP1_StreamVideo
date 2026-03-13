@@ -1,25 +1,14 @@
-﻿using Client_StreamLAN.Services;
+using Client_StreamLAN.Models;
+using Client_StreamLAN.Services;
 using Client_StreamLAN.Utils;
 using OpenCvSharp;
-using OpenCvSharp.Internal.Vectors;
 using System;
-using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-
-
 namespace Client_StreamLAN.Views
 {
-    public class ServerInfo
-    {
-        public string Name { get; set; }
-        public string Ip { get; set; }
-        public int Port { get; set; }
-
-        public override string ToString() => $"{Name} - {Ip}:{Port}";
-    }
     public partial class MainWindow : System.Windows.Window
     {
         private CameraService _camera;
@@ -183,10 +172,9 @@ namespace Client_StreamLAN.Views
 
         private void CbServers_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (cbServers.SelectedItem is ServerInfo s)
+            if (cbServers.SelectedItem is ServerInfo s && !string.IsNullOrEmpty(s.Ip))
             {
                 _sender = new UdpSender(s.Ip, s.Port);
-
             }
         }
 
