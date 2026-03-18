@@ -117,9 +117,45 @@
                                 <TextBlock x:Name="txtRecordingStatus" Text="Idle" VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}" Margin="8,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
-                        <!-- Camera Display -->
+                        <!-- Camera Display: grid of client streams -->
                         <Border Grid.Row="1" Style="{StaticResource AutumnVideoContainer}">
-                            <Image x:Name="imgCamera" Stretch="Uniform" Margin="5"/>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="clientsGrid">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <!-- UniformGrid: auto rows, fixed columns for nice tiling -->
+                                            <UniformGrid Columns="2" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="6"
+                                                    Background="{StaticResource AutumnPanelBrush}"
+                                                    CornerRadius="8"
+                                                    Padding="6"
+                                                    BorderBrush="{StaticResource AutumnAccentBrush}"
+                                                    BorderThickness="0.5">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="{Binding DisplayName}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{StaticResource AutumnTextSecondaryBrush}"
+                                                               Margin="0,0,0,4"/>
+                                                    <Border Grid.Row="1" Background="Black" CornerRadius="4">
+                                                        <Image Source="{Binding CurrentFrame}"
+                                                               Stretch="Uniform"
+                                                               Margin="2"/>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
                         </Border>
                     </Grid>
                 </Border>

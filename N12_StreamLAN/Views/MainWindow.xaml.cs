@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using OpenCvSharp;
+using Server_StreamLAN.Models;
 using Server_StreamLAN.Services;
 using Server_StreamLAN.Utils;
 
@@ -23,6 +27,11 @@ namespace Server_StreamLAN.Views
         private DateTime _recordingStartUtc;
         private volatile bool _faceDetectionEnabled;
         private static readonly SolidColorBrush RecordActiveBrush = new(Color.FromRgb(0xCD, 0x5C, 0x5C));
+
+        // Multi-client state
+        private readonly ObservableCollection<ClientStreamViewModel> _clientStreams = new();
+        private readonly Dictionary<string, ClientStreamViewModel> _clientLookup = new();
+        private readonly object _clientsLock = new();
 
         public MainWindow()
         {
@@ -45,6 +54,9 @@ namespace Server_StreamLAN.Views
             _recordingTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromSeconds(1) };
             _recordingTimer.Tick += RecordingTimer_Tick;
 
+            // Bind grid to collection of client streams
+            clientsGrid.ItemsSource = _clientStreams;
+
             StartReceiveLoop();
         }
 
@@ -56,7 +68,7 @@ namespace Server_StreamLAN.Views
                 {
                     try
                     {
-                        byte[] data = await _receiver.ReceiveAsync();
+                        var (data, remote) = await _receiver.ReceiveAsync();
 
                         using Mat frame = Cv2.ImDecode(data, ImreadModes.Color);
 
@@ -73,9 +85,24 @@ namespace Server_StreamLAN.Views
                             if (bitmap != null)
                             {
                                 bitmap.Freeze();
+
+                                // Update or create tile for this client on UI thread
                                 Dispatcher.Invoke(() =>
                                 {
-                                    imgCamera.Source = bitmap;
+                                    string key = remote.ToString();
+                                    ClientStreamViewModel vm;
+
+                                    lock (_clientsLock)
+                                    {
+                                        if (!_clientLookup.TryGetValue(key, out vm!))
+                                        {
+                                            vm = new ClientStreamViewModel(remote);
+                                            _clientLookup[key] = vm;
+                                            _clientStreams.Add(vm);
+                                        }
+                                    }
+
+                                    vm.CurrentFrame = bitmap;
                                 });
                             }
                         }
