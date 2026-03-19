@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 using Client_StreamLAN.Models;
+=======
+>>>>>>> Stashed changes
 using Client_StreamLAN.Services;
 using Client_StreamLAN.Utils;
 using OpenCvSharp;
@@ -175,6 +178,32 @@ namespace Client_StreamLAN.Views
             if (cbServers.SelectedItem is ServerInfo s && !string.IsNullOrEmpty(s.Ip))
             {
                 _sender = new UdpSender(s.Ip, s.Port);
+<<<<<<< Updated upstream
+=======
+                txtManualIp.Text = s.Ip;
+                MessageBox.Show($"Connected to {s.Name} at {s.Ip}:{s.Port}");
+            }
+        }
+
+        private void BtnManualConnect_Click(object sender, RoutedEventArgs e)
+        {
+            string ip = txtManualIp.Text.Trim();
+            if (string.IsNullOrEmpty(ip))
+            {
+                MessageBox.Show("Please enter a valid IP address.");
+                return;
+            }
+
+            try
+            {
+                // Port is assumed 9000 as per existing logic
+                _sender = new UdpSender(ip, 9000);
+                MessageBox.Show($"Manually connected to {ip}:9000");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error connecting to {ip}: {ex.Message}");
+>>>>>>> Stashed changes
             }
         }
 
