@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -10,11 +10,16 @@ namespace Client_StreamLAN.Services
     {
         public static string? GetLocalIPv4()
         {
-            foreach(var ni in NetworkInterface.GetAllNetworkInterfaces())
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.OperationalStatus != OperationalStatus.Up)
+                // Must be up and not a loopback
+                if (ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
                     continue;
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+
+                // Ignore virtual/tunnel adapters commonly used by machine-only networks (VMware, VirtualBox, etc.)
+                string desc = ni.Description.ToLower();
+                if (desc.Contains("virtual") || desc.Contains("pseudo") || desc.Contains("tunnel") || 
+                    desc.Contains("vmware") || desc.Contains("virtualbox") || desc.Contains("docker"))
                     continue;
 
                 var ipProps = ni.GetIPProperties();

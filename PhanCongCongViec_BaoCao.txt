@@ -1,0 +1,81 @@
+BẢNG PHÂN CÔNG CÔNG VIỆC NHÓM 5 NGƯỜI
+DỰ ÁN: Ứng dụng Stream Video qua mạng LAN có tính năng Nhận diện khuôn mặt & Ghi hình
+
+---------------------------------------------------------
+ĐỢT 1: CORE TÍNH NĂNG STREAM VIDEO TRÊN CÙNG 1 MÁY (LOCALHOST)
+---------------------------------------------------------
+* Sinh viên 1 (Trưởng nhóm):
+  - Khởi tạo kiến trúc project (Mô hình Server-Client).
+  - Nghiên cứu và thiết lập thư viện cốt lõi để truy cập và chụp hình từ Camera thiết bị.
+  - Tích hợp và đồng bộ (merge code) các module của Đợt 1 từ các thành viên, chạy thử Server và Client trên cùng 1 máy (Localhost).
+
+* Sinh viên 2 (Mạng lưới/Socket):
+  - Xây dựng module kết nối cơ bản (TCP/UDP Socket) trên cùng một máy (IP: 127.0.0.1).
+  - Lắng nghe kết nối tới (Server) và gửi yêu cầu xin kết nối (Client).
+
+* Sinh viên 3 (Truyền tải dữ liệu Media):
+  - Lập trình cơ chế cắt các khung hình (Frame) thu được từ Camera thành mảng byte (Byte array).
+  - Xử lý việc nén cấu trúc byte để gửi qua Socket và tái tạo (decode) thành hình ảnh hiển thị ở phía Client.
+
+* Sinh viên 4 (Giao diện UI/UX):
+  - Thiết kế cấu trúc giao diện chính (MainWindow) cho phần mềm Server bằng WPF.
+  - Thiết kế màn hình hiển thị video (Live Stream Box) và các nút điều khiển luồng (Start, Stop).
+
+* Sinh viên 5 (Giao diện Client & Kiểm thử Core):
+  - Thiết kế giao diện (Client Form) cho người dùng cuối bao gồm khung hiển thị luồng video.
+  - Phối hợp với trưởng nhóm kiểm thử luồng Đợt 1, test các trường hợp đóng/mở luồng liên tục để tìm lỗi rò rỉ bộ nhớ hoặc đứng máy.
+
+---------------------------------------------------------
+ĐỢT 2: CẢI TIẾN ỨNG DỤNG - KẾT NỐI QUA MẠNG LAN THỰC TẾ
+---------------------------------------------------------
+* Sinh viên 1 (Trưởng nhóm):
+  - Quản lý đa luồng (Multi-threading). Đảm bảo giao diện UI của Server và Client không bị treo (freeze) khi truyền/nhận trực tiếp qua mạng LAN thực tế.
+  - Xử lý các cấu trúc mã nguồn gây ra độ trễ (latency) khi stream.
+
+* Sinh viên 2 (Mạng lưới/Socket - Cải tiến):
+  - Nâng cấp module giao tiếp mạng: Xây dựng cơ chế để Server lắng nghe trên IP thực tế (IPv4 LAN mạng WiFi/Ethernet).
+  - Cấu hình cho phép ứng dụng đi qua hệ thống tường lửa (Firewall) của Windows để các thiết bị lạ kết nối được.
+
+* Sinh viên 5 (Giao tiếp Client & LAN Testing):
+  - Cập nhật chức năng cho phép Client có thể tự do nhập IP của Server để kết nối tới, không nhận cứng Localhost nữa.
+  - Triển khai ứng dụng chạy kiểm tra trên mô hình 2 đến 3 máy tính kết nối chung Switch/WiFi, đánh giá mất gói tin trong môi trường thật.
+
+* Sinh viên 3 (Bảo toàn luồng stream):
+  - Viết module giám sát trạng thái kết nối mạng: báo lỗi "Mất kết nối", Timeout nếu rớt mạng LAN.
+  - Xử lý đóng các vòng lặp stream (Clear Buffer, Đóng Socket) để không bị lỗi văng ứng dụng khi người dùng tự ý tắt ứng dụng giữa chừng.
+
+* Sinh viên 4 (Giao diện UI/UX - Nâng cấp):
+  - Tạo biểu mẫu đăng nhập (LoginForm), tạo bộ kiểm tra dữ liệu đầu vào cho khung nhập IP (chỉ cho phép nhập chuỗi IP đúng chuẩn).
+  - Khoác áo mới cho giao diện (tích hợp bộ hiệu ứng Autumn Theme), hiển thị bảng thông báo kết nối/trạng thái server ở góc màn hình.
+
+---------------------------------------------------------
+ĐỢT 3: MỞ RỘNG ỨNG DỤNG (NHẬN DIỆN KHUÔN MẶT + GHI VIDEO)
+---------------------------------------------------------
+* Sinh viên 1 (Trưởng nhóm - Xử lý AI/Core Engine):
+  - Nghiên cứu và áp dụng thư viện phân tích hình ảnh (HaarCascades hoặc tương đương) để Nhận diện khuôn mặt (Face Recognition) trực tiếp trên luồng Frame thu vào từ Camera.
+  - Thuật toán xác định tọa độ và vẽ khung đỏ (bounding box) quanh khuôn mặt bắt được ngay trên thời gian thực (Real-time).
+
+* Sinh viên 4 (Media & File Storage):
+  - Lập trình tính năng Mở Rộng: Ghi hình (Record Video).
+  - Viết module nhận chuỗi frame lúc stream để nén thành một tệp tin Video hoàn chỉnh (MP4/AVI) và lưu xuống ổ cứng nội bộ hoặc thư mục do người dùng chỉ định.
+
+* Sinh viên 3 (Truyền tải AI thời gian thực):
+  - Viết lớp xử lý đẩy hình ảnh ĐÃ ĐƯỢC VẼ KHUNG NHẬN DIỆN đi sang mạng LAN thay vì hình ảnh gốc.
+  - Tối ưu lại cơ chế buffer/nén file cho quá trình này để FPS không bị giảm sâu khi tính năng nhận diện hoạt động.
+
+* Sinh viên 2 (Logs Server):
+  - Xây dựng phần giám sát nhật ký (Logs) ghi nhận lại toàn bộ các địa chỉ IP trên mạng LAN tương tác với hệ thống.
+  - Ghi báo cáo lịch sử hệ thống (Thời gian bắt đầu stream, Thời gian ngưng, Địa chỉ client kết nối).
+
+* Sinh viên 5 (Hoàn thiện & Sản phẩm):
+  - Kiểm thử đồng loạt 3 chức năng phức tạp nhất: Stream LAN + Face Detection + Record Video cùng một thời điểm, kiểm soát RAM.
+  - Đóng gói toàn bộ DLL, Models nhận diện và Source code thành file cài đặt/chạy trực tiếp (.exe). Xây dựng tài liệu báo cáo hướng dẫn (Readme).
+
+---------------------------------------------------------
+TỔNG KẾT TỈ LỆ ĐÓNG GÓP:
+SV1 (Trưởng nhóm - AI & Kiến trúc): 25%
+SV2 (Kỹ sư Mạng/Socket): 20%
+SV3 (Xử lý truyền tải & Đa luồng): 20%
+SV4 (UI/UX & Xử lý File Storage): 18%
+SV5 (Xây dựng Client & Kiểm thử LAN): 17%
+---------------------------------------------------------
