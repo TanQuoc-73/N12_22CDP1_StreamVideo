@@ -1,22 +1,42 @@
-﻿using System.Net;
+using System;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Client_StreamLAN.Services
 {
-    public class UdpSender
+    public class UdpSender : IDisposable
     {
-        private readonly UdpClient _udp;
+        private UdpClient _udp;
         private readonly IPEndPoint _endPoint;
 
-        public  UdpSender(string ip, int port)
+        public string ServerIp   { get; }
+        public int    ServerPort { get; }
+
+        public UdpSender(string ip, int port)
         {
-            _udp = new UdpClient();
-            _endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            ServerIp   = ip;
+            ServerPort = port;
+            _udp       = new UdpClient();
+            _endPoint  = new IPEndPoint(IPAddress.Parse(ip), port);
         }
 
         public void Send(byte[] data)
+            => _udp.Send(data, data.Length, _endPoint);
+
+        public async Task SendAsync(byte[] data)
+            => await _udp.SendAsync(data, data.Length, _endPoint);
+
+        /// <summary>Re-creates the internal socket (call after a network error).</summary>
+        public void Reconnect()
         {
-            _udp.Send(data, data.Length, _endPoint);
+            try { _udp.Close(); _udp.Dispose(); } catch { }
+            _udp = new UdpClient();
+        }
+
+        public void Dispose()
+        {
+            try { _udp.Close(); _udp.Dispose(); } catch { }
         }
     }
 }

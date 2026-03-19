@@ -1,212 +1,310 @@
-<<<<<<< Updated upstream
 using Client_StreamLAN.Models;
-=======
->>>>>>> Stashed changes
 using Client_StreamLAN.Services;
 using Client_StreamLAN.Utils;
 using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Client_StreamLAN.Views
 {
     public partial class MainWindow : System.Windows.Window
     {
-        private CameraService _camera;
-        private CancellationTokenSource _cts;
-        private UdpSender _sender;
+        // ── Services ───────────────────────────────────────────────────────
+        private readonly CameraService          _camera     = new();
+        private readonly StreamController       _controller = new();
+        private readonly AdaptiveBitrateController _adaptive = new();
+        private UdpSender?                      _sender;
 
+        // ── Stream loop ────────────────────────────────────────────────────
+        private CancellationTokenSource? _cts;
+        private uint  _seqNo;
+        private int   _frameCount;
+        private DateTime _fpsTimer = DateTime.UtcNow;
 
+        // ── Auto-reconnect ─────────────────────────────────────────────────
+        private int  _sendFailCount;
+        private bool _reconnecting;
+        private const int MaxFails = 5;
+
+        // ── Resolution map ─────────────────────────────────────────────────
+        private static readonly Dictionary<string, OpenCvSharp.Size> Resolutions = new()
+        {
+            { "320×240",  new OpenCvSharp.Size(320,  240)  },
+            { "640×480",  new OpenCvSharp.Size(640,  480)  },
+            { "960×540",  new OpenCvSharp.Size(960,  540)  },
+            { "1280×720", new OpenCvSharp.Size(1280, 720)  },
+        };
+
+        // ──────────────────────────────────────────────────────────────────
         public MainWindow()
         {
             InitializeComponent();
 
-            // TEST :
-            // if (!UserSession.IsLoggedIn)
-            // {
-            //     MessageBox.Show("Chua dang nhap");
-            //     this.Close();
-            //     return;
-            // }
+            _controller.StateChanged += OnStateChanged;
 
+            txtLocalIp.Text    = NetworkInfo.GetLocalIPv4() ?? "Không xác định";
+            txtUserEmail.Text  = "User: TEST_MODE";
 
-            txtLocalIp.Text = NetworkInfo.GetLocalIPv4() ?? "Khong xac dinh duoc IPv4";
+            // Populate combos
+            cbResolution.ItemsSource   = Resolutions.Keys.ToList();
+            cbResolution.SelectedIndex = 1; // 640×480
 
-            txtUserEmail.Text = $"User: TEST_MODE";
+            int camCount = CameraService.GetCameraCount();
+            cbCamera.ItemsSource   = Enumerable.Range(0, camCount).Select(i => $"Camera {i}").ToList();
+            cbCamera.SelectedIndex = 0;
 
-            try
-            {
-                _camera = new CameraService();
-                _camera.Start();
-
-                
-                _sender = new UdpSender("127.0.0.1", 9000);
-
-
-                _cts = new CancellationTokenSource();
-                StartCameraLoop();
-            }
-            catch (Exception)
-            {
-                this.Close();
-            }
-
-
+            // Try to open default camera
+            try { _camera.Start(0); }
+            catch { /* no camera yet */ }
         }
 
-        private void StartCameraLoop()
+        // ── Stream control ─────────────────────────────────────────────────
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(async () =>
+            if (_sender == null)
             {
-                int frameCount = 0;
-                while (!_cts.IsCancellationRequested)
+                MessageBox.Show("Vui lòng kết nối tới Server trước khi stream.");
+                return;
+            }
+            _seqNo = 0;
+            _adaptive.Reset();
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            _controller.Start();
+            _ = Task.Run(() => StreamLoopAsync(_cts.Token));
+        }
+
+        private void BtnStop_Click(object sender, RoutedEventArgs e)
+        {
+            _cts?.Cancel();
+            _controller.Stop();
+        }
+
+        private void BtnPause_Click(object sender, RoutedEventArgs e)
+        {
+            if (_controller.IsRunning)  _controller.Pause();
+            else if (_controller.IsPaused) _controller.Resume();
+        }
+
+        private void OnStateChanged(StreamState state)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                txtStreamState.Text = state switch
                 {
-                    try
-                    {
-                        Mat frame = _camera.GetFrame();
-                        if (frame != null && !frame.Empty())
-                        {
-                            frameCount++;
-                            
-                            using var resized = new Mat();
-                            Cv2.Resize(frame, resized, new OpenCvSharp.Size(640, 480));
-                            
-                            //JPEG QUALITY < 60KB
-                            var encodeParams = new[] { (int)ImwriteFlags.JpegQuality, 50 };
-                            Cv2.ImEncode(".jpg", resized, out byte[] buffer, encodeParams);
-                            
+                    StreamState.Running      => "🟢 Streaming",
+                    StreamState.Paused       => "⏸ Paused",
+                    StreamState.Reconnecting => "🔄 Reconnecting...",
+                    _                        => "⏹ Stopped"
+                };
 
-                            
-                            // Chỉ gửi nếu JPEG QUALITY< 60KB
-                            if (buffer.Length < 60000)
-                            {
-                                _sender.Send(buffer);
-                            }
+                btnStart.IsEnabled = state == StreamState.Stopped;
+                btnStop.IsEnabled  = state != StreamState.Stopped;
+                btnPause.IsEnabled = state == StreamState.Running || state == StreamState.Paused;
+                btnPause.Content   = state == StreamState.Paused ? "▶ Resume" : "⏸ Pause";
 
-
-                            var bitmap = ImgConverter.ToBitmapSource(resized);
-                            
-                            if (bitmap != null)
-                            {
-                                bitmap.Freeze();
-                                Dispatcher.Invoke(() =>
-                                {
-                                    imgCamera.Source = bitmap;
-                                    
-
-                                });
-                            }
-
-                            
-                            frame.Dispose();
-                        }
-
-                    }
-                    catch (Exception)
-                    {
-                        break;
-                    }
-
-                    await Task.Delay(30);
-                }
+                ellipseStatus.Fill = state == StreamState.Running
+                    ? new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E))
+                    : new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
             });
         }
 
-        protected override void OnClosed(System.EventArgs e)
+        // ── Send loop ──────────────────────────────────────────────────────
+        private async Task StreamLoopAsync(CancellationToken ct)
         {
-            _cts?.Cancel();
-            _camera?.Stop();
-            base.OnClosed(e);
-        }
-
-        // Window control handlers
-        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (e.ClickCount == 2)
+            while (!ct.IsCancellationRequested)
             {
-                // Double-click to maximize/restore
-                MaximizeRestoreWindow();
+                try
+                {
+                    if (_controller.IsPaused || _reconnecting)
+                    {
+                        await Task.Delay(100, ct);
+                        continue;
+                    }
+
+                    using Mat? raw = _camera.GetFrame();
+                    if (raw == null || raw.Empty()) { await Task.Delay(30, ct); continue; }
+
+                    using Mat processed = _controller.ApplyControls(raw);
+                    using var resized   = new Mat();
+                    Cv2.Resize(processed, resized, _controller.Resolution);
+
+                    int quality = _controller.UseAdaptive ? _adaptive.Quality : _controller.ManualQuality;
+                    Cv2.ImEncode(".jpg", resized, out byte[] jpeg,
+                                 new[] { (int)ImwriteFlags.JpegQuality, quality });
+
+                    byte[] packet = PacketProtocol.Pack(_seqNo++, PacketProtocol.FlagKeyFrame, jpeg);
+
+                    if (_sender != null && packet.Length < 65_000)
+                    {
+                        var sw = Stopwatch.StartNew();
+                        try
+                        {
+                            _sender.Send(packet);
+                            sw.Stop();
+                            _adaptive.Feedback(packet.Length, sw.ElapsedMilliseconds);
+                            _sendFailCount = 0;
+                        }
+                        catch
+                        {
+                            sw.Stop();
+                            if (++_sendFailCount >= MaxFails)
+                                _ = Task.Run(() => ReconnectAsync(ct));
+                        }
+                    }
+
+                    var bitmap = resized.ToBitmapSource();
+                    bitmap?.Freeze();
+                    Dispatcher.InvokeAsync(() => imgCamera.Source = bitmap);
+
+                    // FPS counter (update every second)
+                    _frameCount++;
+                    double elapsed = (DateTime.UtcNow - _fpsTimer).TotalSeconds;
+                    if (elapsed >= 1.0)
+                    {
+                        int fps = (int)(_frameCount / elapsed);
+                        _frameCount = 0;
+                        _fpsTimer   = DateTime.UtcNow;
+                        Dispatcher.InvokeAsync(() =>
+                        {
+                            txtFps.Text     = $"FPS: {fps}";
+                            txtQuality.Text = $"Q: {quality}%";
+                        });
+                    }
+                }
+                catch (OperationCanceledException) { break; }
+                catch { /* swallow per-frame errors */ }
+
+                await Task.Delay(_controller.FrameDelayMs, ct).ConfigureAwait(false);
             }
-            else
+        }
+
+        // ── Auto-reconnect ─────────────────────────────────────────────────
+        private async Task ReconnectAsync(CancellationToken ct)
+        {
+            _reconnecting = true;
+            _controller.SetReconnecting();
+            string ip   = _sender?.ServerIp   ?? "127.0.0.1";
+            int    port = _sender?.ServerPort  ?? 9000;
+
+            while (!ct.IsCancellationRequested && _sendFailCount >= MaxFails)
             {
-                // Single click to drag
-                this.DragMove();
+                await Task.Delay(2000, ct);
+                try
+                {
+                    _sender?.Dispose();
+                    _sender = new UdpSender(ip, port);
+                    _sendFailCount = 0;
+                    _reconnecting  = false;
+                    _controller.Resume();
+                    break;
+                }
+                catch { /* retry */ }
             }
         }
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        // ── Camera controls ────────────────────────────────────────────────
+        private void CbCamera_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            try { _camera.SwitchCamera(cbCamera.SelectedIndex); }
+            catch { /* camera not available */ }
         }
 
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        private void CbResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MaximizeRestoreWindow();
+            if (cbResolution.SelectedItem is string key && Resolutions.TryGetValue(key, out var size))
+                _controller.Resolution = size;
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void SliderQuality_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            this.Close();
+            _controller.ManualQuality = (int)sliderQuality.Value;
+            if (txtManualQuality != null) txtManualQuality.Text = $"{_controller.ManualQuality}%";
         }
 
-        private void MaximizeRestoreWindow()
+        private void ChkAdaptive_Changed(object sender, RoutedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.WindowState = WindowState.Normal;
-            }
-            else
-            {
-                this.WindowState = WindowState.Maximized;
-            }
+            _controller.UseAdaptive  = chkAdaptive.IsChecked == true;
+            sliderQuality.IsEnabled  = !_controller.UseAdaptive;
         }
 
+        private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+            => _controller.Brightness = sliderBrightness.Value;
+
+        private void SliderContrast_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+            => _controller.Contrast = sliderContrast.Value;
+
+        private void ChkFlipH_Changed(object sender, RoutedEventArgs e)
+            => _controller.FlipH = chkFlipH.IsChecked == true;
+
+        private void ChkFlipV_Changed(object sender, RoutedEventArgs e)
+            => _controller.FlipV = chkFlipV.IsChecked == true;
+
+        // ── Server connection ──────────────────────────────────────────────
         private async void BtnDiscover_Click(object sender, RoutedEventArgs e)
         {
-            var discovery = new ServerDiscovery();
-            var servers = await discovery.DiscoverAsync();
-
+            var servers = await new ServerDiscovery().DiscoverAsync();
             cbServers.ItemsSource = servers;
         }
 
-        
-
-        private void CbServers_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CbServers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cbServers.SelectedItem is ServerInfo s && !string.IsNullOrEmpty(s.Ip))
             {
-                _sender = new UdpSender(s.Ip, s.Port);
-<<<<<<< Updated upstream
-=======
                 txtManualIp.Text = s.Ip;
-                MessageBox.Show($"Connected to {s.Name} at {s.Ip}:{s.Port}");
+                ConnectTo(s.Ip, s.Port);
             }
         }
 
         private void BtnManualConnect_Click(object sender, RoutedEventArgs e)
         {
             string ip = txtManualIp.Text.Trim();
-            if (string.IsNullOrEmpty(ip))
-            {
-                MessageBox.Show("Please enter a valid IP address.");
-                return;
-            }
-
-            try
-            {
-                // Port is assumed 9000 as per existing logic
-                _sender = new UdpSender(ip, 9000);
-                MessageBox.Show($"Manually connected to {ip}:9000");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error connecting to {ip}: {ex.Message}");
->>>>>>> Stashed changes
-            }
+            if (string.IsNullOrEmpty(ip)) { MessageBox.Show("Nhập IP server hợp lệ."); return; }
+            ConnectTo(ip, 9000);
         }
 
+        private void ConnectTo(string ip, int port)
+        {
+            try
+            {
+                _sender?.Dispose();
+                _sender        = new UdpSender(ip, port);
+                _sendFailCount = 0;
+                _reconnecting  = false;
+                txtServerStatus.Text = $"→ {ip}:{port}";
+                btnStart.IsEnabled   = true;
+            }
+            catch (Exception ex) { MessageBox.Show($"Lỗi kết nối: {ex.Message}"); }
+        }
 
+        // ── Window chrome ──────────────────────────────────────────────────
+        protected override void OnClosed(EventArgs e)
+        {
+            _cts?.Cancel();
+            _camera.Stop();
+            _sender?.Dispose();
+            base.OnClosed(e);
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2) MaximizeRestoreWindow();
+            else DragMove();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e) => MaximizeRestoreWindow();
+        private void CloseButton_Click(object sender, RoutedEventArgs e)    => Close();
+
+        private void MaximizeRestoreWindow()
+            => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     }
 }
