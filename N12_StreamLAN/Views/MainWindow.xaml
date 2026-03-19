@@ -100,7 +100,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                 <Ellipse Width="10" Height="10" Fill="{StaticResource AutumnSecondaryBrush}"
                                          Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="Listening on port 9000 (Video) · 9001 (Discovery)"
+                                <TextBlock Text="Listening on port 9000 (Video) · 9001 (Discovery) · 9002 (Audio)"
                                            Style="{StaticResource AutumnBodyText}"/>
                             </StackPanel>
                         </StackPanel>
@@ -184,6 +184,27 @@
                                     <TextBlock x:Name="txtRecordingStatus" Text="Idle"
                                                VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"
                                                Margin="6,0,0,0"/>
+                                    <!-- Audio controls -->
+                                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                                               Margin="10,0,6,0"/>
+                                    <ToggleButton x:Name="btnMuteAudio" Padding="12,6"
+                                                  Margin="0,0,10,0" Cursor="Hand"
+                                                  Background="#E0E0E0" Foreground="#333"
+                                                  BorderThickness="0"
+                                                  Checked="BtnMuteAudio_Changed"
+                                                  Unchecked="BtnMuteAudio_Changed">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🔊" FontSize="14"
+                                                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <TextBlock x:Name="txtMuteLabel" Text="Audio"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </ToggleButton>
+                                    <TextBlock Text="Vol:" VerticalAlignment="Center"
+                                               Style="{StaticResource AutumnBodyText}" Margin="0,0,4,0"/>
+                                    <Slider x:Name="sliderVolume" Minimum="0" Maximum="100" Value="100"
+                                            Width="80" VerticalAlignment="Center"
+                                            ValueChanged="SliderVolume_ValueChanged"/>
                                 </StackPanel>
                             </StackPanel>
                             <!-- Video -->

@@ -11,8 +11,10 @@ namespace Server_StreamLAN.Services
     {
         private const int VideoPort = 9000;
         private const int DiscoveryPort = 9001;
+        private const int AudioPort = 9002;
         private const string RuleNameVideo = "StreamLAN-Video";
         private const string RuleNameDiscovery = "StreamLAN-Discovery";
+        private const string RuleNameAudio = "StreamLAN-Audio";
 
         private static string FlagPath =>
             Path.Combine(
@@ -66,7 +68,7 @@ namespace Server_StreamLAN.Services
         private static void AddFirewallRulesElevated()
         {
             // netsh: thêm 2 rule UDP inbound. Dùng && để chỉ set flag khi thành công.
-            var cmd = $@"/c netsh advfirewall firewall add rule name=""{RuleNameVideo}"" dir=in action=allow protocol=UDP localport={VideoPort} && netsh advfirewall firewall add rule name=""{RuleNameDiscovery}"" dir=in action=allow protocol=UDP localport={DiscoveryPort}";
+            var cmd = $@"/c netsh advfirewall firewall add rule name=""{RuleNameVideo}"" dir=in action=allow protocol=UDP localport={VideoPort} && netsh advfirewall firewall add rule name=""{RuleNameDiscovery}"" dir=in action=allow protocol=UDP localport={DiscoveryPort} && netsh advfirewall firewall add rule name=""{RuleNameAudio}"" dir=in action=allow protocol=UDP localport={AudioPort}";
             var start = new ProcessStartInfo
             {
                 FileName = "cmd.exe",

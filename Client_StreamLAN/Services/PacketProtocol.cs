@@ -11,6 +11,7 @@ namespace Client_StreamLAN.Services
         public const int HeaderSize = 5;
         public const byte FlagKeyFrame = 0x01;
         public const byte FlagPaused   = 0x02;
+        public const byte FlagAudio    = 0x04;
 
         public static byte[] Pack(uint seqNo, byte flags, byte[] data)
         {

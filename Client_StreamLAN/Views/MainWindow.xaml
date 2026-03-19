@@ -196,6 +196,9 @@
                             <CheckBox x:Name="chkFlipV" Content="↕ Flip V"
                                       Checked="ChkFlipV_Changed" Unchecked="ChkFlipV_Changed"
                                       VerticalAlignment="Center" Margin="0,0,20,0"/>
+                            <CheckBox x:Name="chkMicrophone" Content="🎤 Microphone"
+                                      Checked="ChkMicrophone_Changed" Unchecked="ChkMicrophone_Changed"
+                                      IsChecked="True" VerticalAlignment="Center" Margin="0,0,20,0"/>
 
                             <!-- Status indicators -->
                             <Ellipse x:Name="ellipseStatus" Width="10" Height="10"

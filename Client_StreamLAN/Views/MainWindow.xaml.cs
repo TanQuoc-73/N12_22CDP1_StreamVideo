@@ -22,6 +22,7 @@ namespace Client_StreamLAN.Views
         private readonly StreamController       _controller = new();
         private readonly AdaptiveBitrateController _adaptive = new();
         private UdpSender?                      _sender;
+        private readonly AudioCaptureService    _audioCapture = new();
 
         // ── Stream loop ────────────────────────────────────────────────────
         private CancellationTokenSource? _cts;
@@ -80,18 +81,34 @@ namespace Client_StreamLAN.Views
             _cts = new CancellationTokenSource();
             _controller.Start();
             _ = Task.Run(() => StreamLoopAsync(_cts.Token));
+
+            // Start audio capture if microphone is enabled
+            if (chkMicrophone.IsChecked == true && _sender != null)
+            {
+                try { _audioCapture.Start(_sender.ServerIp); }
+                catch { /* no microphone available */ }
+            }
         }
 
         private void BtnStop_Click(object sender, RoutedEventArgs e)
         {
             _cts?.Cancel();
             _controller.Stop();
+            _audioCapture.Stop();
         }
 
         private void BtnPause_Click(object sender, RoutedEventArgs e)
         {
-            if (_controller.IsRunning)  _controller.Pause();
-            else if (_controller.IsPaused) _controller.Resume();
+            if (_controller.IsRunning)
+            {
+                _controller.Pause();
+                _audioCapture.Enabled = false;
+            }
+            else if (_controller.IsPaused)
+            {
+                _controller.Resume();
+                _audioCapture.Enabled = chkMicrophone.IsChecked == true;
+            }
         }
 
         private void OnStateChanged(StreamState state)
@@ -233,7 +250,8 @@ namespace Client_StreamLAN.Views
         private void ChkAdaptive_Changed(object sender, RoutedEventArgs e)
         {
             _controller.UseAdaptive  = chkAdaptive.IsChecked == true;
-            sliderQuality.IsEnabled  = !_controller.UseAdaptive;
+            if (sliderQuality != null)
+                sliderQuality.IsEnabled  = !_controller.UseAdaptive;
         }
 
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -247,6 +265,13 @@ namespace Client_StreamLAN.Views
 
         private void ChkFlipV_Changed(object sender, RoutedEventArgs e)
             => _controller.FlipV = chkFlipV.IsChecked == true;
+
+        private void ChkMicrophone_Changed(object sender, RoutedEventArgs e)
+        {
+            bool enabled = chkMicrophone.IsChecked == true;
+            if (_audioCapture.IsCapturing)
+                _audioCapture.Enabled = enabled;
+        }
 
         // ── Server connection ──────────────────────────────────────────────
         private async void BtnDiscover_Click(object sender, RoutedEventArgs e)
@@ -290,6 +315,7 @@ namespace Client_StreamLAN.Views
         {
             _cts?.Cancel();
             _camera.Stop();
+            _audioCapture.Dispose();
             _sender?.Dispose();
             base.OnClosed(e);
         }

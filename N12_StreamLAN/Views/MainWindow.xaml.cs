@@ -20,6 +20,8 @@ namespace Server_StreamLAN.Views
         private DiscoveryService    _discovery;
         private FaceDetectionService _faceDetection;
         private RecordingService    _recording;
+        private AudioPlaybackService _audioPlayback;
+        private UdpAudioReceiver     _audioReceiver;
 
         // ── State ──────────────────────────────────────────────────────────
         private volatile bool _faceDetectionEnabled;
@@ -49,6 +51,12 @@ namespace Server_StreamLAN.Views
             _discovery.Start();
             _faceDetection = new FaceDetectionService();
             _recording     = new RecordingService();
+
+            // Audio playback
+            _audioPlayback = new AudioPlaybackService();
+            _audioReceiver = new UdpAudioReceiver(_audioPlayback);
+            _audioPlayback.Start();
+            _audioReceiver.Start();
 
             // Recording status timer
             _recordingTimer = new DispatcherTimer(DispatcherPriority.Background)
@@ -168,6 +176,21 @@ namespace Server_StreamLAN.Views
         private void BtnFaceDetection_Changed(object sender, RoutedEventArgs e)
             => _faceDetectionEnabled = btnFaceDetection.IsChecked == true;
 
+        // ── Audio controls ─────────────────────────────────────────────────
+        private void BtnMuteAudio_Changed(object sender, RoutedEventArgs e)
+        {
+            bool muted = btnMuteAudio.IsChecked == true;
+            _audioPlayback.IsMuted = muted;
+            txtMuteLabel.Text = muted ? "Muted" : "Audio";
+        }
+
+        private void SliderVolume_ValueChanged(object sender,
+            System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_audioPlayback != null)
+                _audioPlayback.Volume = (float)(sliderVolume.Value / 100.0);
+        }
+
         // ── Cleanup ────────────────────────────────────────────────────────
         protected override void OnClosed(EventArgs e)
         {
@@ -175,6 +198,8 @@ namespace Server_StreamLAN.Views
             _recordingTimer?.Stop();
             _recording?.Stop();
             _faceDetection?.Dispose();
+            _audioReceiver?.Dispose();
+            _audioPlayback?.Dispose();
             _receiver?.Dispose();
             _cts?.Cancel();
             base.OnClosed(e);
