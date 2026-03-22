@@ -43,7 +43,7 @@ namespace Server_StreamLAN.Views
             InitializeComponent();
 
             FirewallHelper.EnsureFirewallRules();
-            txtLocalIp.Text = NetworkInfo.GetLocalIPv4() ?? "Không xác định";
+            txtLocalIp.Text = NetworkInfo.GetLocalIPv4() ?? "Unavailable";
 
             _receiver      = new UdpReceiver(9000);
             _cts           = new CancellationTokenSource();

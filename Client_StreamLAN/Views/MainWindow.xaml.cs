@@ -51,7 +51,7 @@ namespace Client_StreamLAN.Views
 
             _controller.StateChanged += OnStateChanged;
 
-            txtLocalIp.Text    = NetworkInfo.GetLocalIPv4() ?? "Không xác định";
+            txtLocalIp.Text    = NetworkInfo.GetLocalIPv4() ?? "Unavailable";
             txtUserEmail.Text  = "User: TEST_MODE";
 
             // Populate combos
@@ -72,7 +72,7 @@ namespace Client_StreamLAN.Views
         {
             if (_sender == null)
             {
-                MessageBox.Show("Vui lòng kết nối tới Server trước khi stream.");
+                MessageBox.Show("Please connect to a server before streaming.");
                 return;
             }
             _seqNo = 0;
@@ -276,8 +276,22 @@ namespace Client_StreamLAN.Views
         // ── Server connection ──────────────────────────────────────────────
         private async void BtnDiscover_Click(object sender, RoutedEventArgs e)
         {
-            var servers = await new ServerDiscovery().DiscoverAsync();
-            cbServers.ItemsSource = servers;
+            try
+            {
+                btnDiscover.IsEnabled = false;
+                var servers = await new ServerDiscovery().DiscoverAsync();
+                cbServers.ItemsSource = servers;
+                if (servers.Count == 0)
+                    txtServerStatus.Text = "No server found";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error discovering servers: {ex.Message}");
+            }
+            finally
+            {
+                btnDiscover.IsEnabled = true;
+            }
         }
 
         private void CbServers_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -304,7 +318,7 @@ namespace Client_StreamLAN.Views
                 _sender        = new UdpSender(ip, port);
                 _sendFailCount = 0;
                 _reconnecting  = false;
-                txtServerStatus.Text = $"→ {ip}:{port}";
+                txtServerStatus.Text = $"Connected: {ip}:{port}";
                 btnStart.IsEnabled   = true;
             }
             catch (Exception ex) { MessageBox.Show($"Lỗi kết nối: {ex.Message}"); }

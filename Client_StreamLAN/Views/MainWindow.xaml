@@ -52,6 +52,14 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Collapsible options expander -->
+        <Style x:Key="OptionsExpander" TargetType="Expander">
+            <Setter Property="Foreground"      Value="{StaticResource AutumnTextPrimaryBrush}"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin"          Value="0,6,0,0"/>
+        </Style>
     </Window.Resources>
 
     <Border Background="{StaticResource AutumnWindowBackground}"
@@ -74,11 +82,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
-                        <TextBlock Text="🎥 " FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock Text="StreamLAN Client" Foreground="White" FontSize="13"
-                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <TextBlock Grid.Column="0" Text="StreamLAN  —  Client" Foreground="White" FontSize="13"
+                               FontWeight="SemiBold" VerticalAlignment="Center" Margin="15,0,0,0"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="−" Click="MinimizeButton_Click" Style="{StaticResource WindowControlButton}"/>
                         <Button Content="□" Click="MaximizeButton_Click" Style="{StaticResource WindowControlButton}"/>
@@ -102,15 +107,14 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="StreamLAN Client" Style="{StaticResource AutumnTitleText}"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="👤 " FontSize="13" Foreground="#94a3b8"/>
-                                <TextBlock x:Name="txtUserEmail" Text="User: TEST_MODE"
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <TextBlock Text="User: " Style="{StaticResource AutumnBodyText}"/>
+                                <TextBlock x:Name="txtUserEmail" Text="TEST_MODE"
                                            Style="{StaticResource AutumnStatusText}"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                <TextBlock Text="📍 " FontSize="13" Foreground="#94a3b8"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                 <TextBlock Text="Local IP: " Style="{StaticResource AutumnBodyText}"/>
                                 <TextBlock x:Name="txtLocalIp" Text="" Style="{StaticResource AutumnStatusText}"/>
                             </StackPanel>
@@ -119,7 +123,7 @@
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                             <TextBlock Text="Server Connection" Style="{StaticResource AutumnBodyText}" Margin="0,0,0,6"/>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <Button Content="🔍 Discover" Click="BtnDiscover_Click"
+                                <Button x:Name="btnDiscover" Content="Discover" Click="BtnDiscover_Click"
                                         Style="{StaticResource CtrlButton}"/>
                                 <ComboBox x:Name="cbServers" SelectionChanged="CbServers_SelectionChanged"
                                           Width="260" Style="{StaticResource ModernComboBox}"/>
@@ -128,9 +132,9 @@
                                 <TextBox x:Name="txtManualIp" Width="170" Padding="8,5" Margin="0,0,6,0"
                                          Text="127.0.0.1" Background="White"
                                          BorderBrush="{StaticResource AutumnAccentBrush}" BorderThickness="1"/>
-                                <Button Content="🔌 Connect" Click="BtnManualConnect_Click"
+                                <Button Content="Connect" Click="BtnManualConnect_Click"
                                         Style="{StaticResource CtrlButton}"/>
-                                <TextBlock x:Name="txtServerStatus" Text="→ Not connected"
+                                <TextBlock x:Name="txtServerStatus" Text="Not connected"
                                            VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"
                                            Margin="6,0,0,0" Foreground="#94a3b8"/>
                             </StackPanel>
@@ -138,80 +142,86 @@
                     </Grid>
                 </Border>
 
-                <!-- ── Controls Panel ─────────────────────────────────── -->
+                <!-- Controls Panel -->
                 <Border Grid.Row="1" Style="{StaticResource AutumnCardPanel}">
                     <StackPanel>
-                        <!-- Row 1: Stream controls + camera/resolution/quality -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <!-- Stream buttons -->
-                            <Button x:Name="btnStart"  Content="▶ Start"  Click="BtnStart_Click"
-                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
-                            <Button x:Name="btnPause"  Content="⏸ Pause"  Click="BtnPause_Click"
-                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
-                            <Button x:Name="btnStop"   Content="⏹ Stop"   Click="BtnStop_Click"
-                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
-
-                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
-                                       Margin="6,0"/>
-
-                            <!-- Camera source -->
-                            <TextBlock Text="📷" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <ComboBox x:Name="cbCamera" SelectionChanged="CbCamera_SelectionChanged"
-                                      Width="110" Style="{StaticResource ModernComboBox}" Margin="0,0,10,0"/>
-
-                            <!-- Resolution -->
-                            <TextBlock Text="📐" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <ComboBox x:Name="cbResolution" SelectionChanged="CbResolution_SelectionChanged"
-                                      Width="100" Style="{StaticResource ModernComboBox}" Margin="0,0,10,0"/>
-
-                            <!-- Adaptive toggle + manual quality -->
-                            <CheckBox x:Name="chkAdaptive" Content="Auto Q"
-                                      Checked="ChkAdaptive_Changed" Unchecked="ChkAdaptive_Changed"
-                                      IsChecked="True" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="Q:" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <Slider x:Name="sliderQuality" Minimum="15" Maximum="85" Value="50"
-                                    Width="100" VerticalAlignment="Center" IsEnabled="False"
-                                    ValueChanged="SliderQuality_ValueChanged" Margin="0,0,4,0"/>
-                            <TextBlock x:Name="txtManualQuality" Text="50%" VerticalAlignment="Center"
-                                       Style="{StaticResource AutumnBodyText}" Margin="0,0,10,0"/>
-                        </StackPanel>
-
-                        <!-- Row 2: Camera controls -->
+                        <!-- Stream controls + Camera + Status -->
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="☀ Brightness:" VerticalAlignment="Center"
+                            <Button x:Name="btnStart" Content="Start"  Click="BtnStart_Click"
+                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
+                            <Button x:Name="btnPause" Content="Pause"  Click="BtnPause_Click"
+                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
+                            <Button x:Name="btnStop"  Content="Stop"   Click="BtnStop_Click"
+                                    Style="{StaticResource CtrlButton}" IsEnabled="False"/>
+
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="8,0"/>
+
+                            <TextBlock Text="Camera:" VerticalAlignment="Center"
                                        Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
-                            <Slider x:Name="sliderBrightness" Minimum="-100" Maximum="100" Value="0"
-                                    Width="90" VerticalAlignment="Center"
-                                    ValueChanged="SliderBrightness_ValueChanged" Margin="0,0,14,0"/>
+                            <ComboBox x:Name="cbCamera" SelectionChanged="CbCamera_SelectionChanged"
+                                      Width="120" Style="{StaticResource ModernComboBox}" Margin="0,0,12,0"/>
 
-                            <TextBlock Text="◑ Contrast:" VerticalAlignment="Center"
-                                       Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
-                            <Slider x:Name="sliderContrast" Minimum="0.5" Maximum="2.0" Value="1.0"
-                                    Width="90" VerticalAlignment="Center"
-                                    ValueChanged="SliderContrast_ValueChanged" Margin="0,0,14,0"/>
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="8,0"/>
 
-                            <CheckBox x:Name="chkFlipH" Content="↔ Flip H"
-                                      Checked="ChkFlipH_Changed" Unchecked="ChkFlipH_Changed"
-                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <CheckBox x:Name="chkFlipV" Content="↕ Flip V"
-                                      Checked="ChkFlipV_Changed" Unchecked="ChkFlipV_Changed"
-                                      VerticalAlignment="Center" Margin="0,0,20,0"/>
-                            <CheckBox x:Name="chkMicrophone" Content="🎤 Microphone"
-                                      Checked="ChkMicrophone_Changed" Unchecked="ChkMicrophone_Changed"
-                                      IsChecked="True" VerticalAlignment="Center" Margin="0,0,20,0"/>
-
-                            <!-- Status indicators -->
-                            <Ellipse x:Name="ellipseStatus" Width="10" Height="10"
+                            <Ellipse x:Name="ellipseStatus" Width="9" Height="9"
                                      Fill="#EF4444" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock x:Name="txtStreamState" Text="⏹ Stopped"
-                                       VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"
-                                       Margin="0,0,16,0"/>
-                            <TextBlock x:Name="txtFps"     Text="FPS: --"
-                                       VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"
-                                       Margin="0,0,10,0"/>
+                            <TextBlock x:Name="txtStreamState" Text="Stopped"
+                                       VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}" Margin="0,0,16,0"/>
+                            <TextBlock x:Name="txtFps" Text="FPS: --"
+                                       VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}" Margin="0,0,10,0"/>
                             <TextBlock x:Name="txtQuality" Text="Q: --%"
                                        VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"/>
                         </StackPanel>
+
+                        <!-- Advanced options (collapsible) -->
+                        <Expander Header="Advanced Options" IsExpanded="False"
+                                  Style="{StaticResource OptionsExpander}">
+                            <StackPanel Margin="4,8,0,0">
+                                <!-- Resolution + Quality -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="Resolution:" VerticalAlignment="Center"
+                                               Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
+                                    <ComboBox x:Name="cbResolution" SelectionChanged="CbResolution_SelectionChanged"
+                                              Width="110" Style="{StaticResource ModernComboBox}" Margin="0,0,16,0"/>
+
+                                    <CheckBox x:Name="chkAdaptive" Content="Auto Quality"
+                                              Checked="ChkAdaptive_Changed" Unchecked="ChkAdaptive_Changed"
+                                              IsChecked="True" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Quality:" VerticalAlignment="Center"
+                                               Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
+                                    <Slider x:Name="sliderQuality" Minimum="15" Maximum="85" Value="50"
+                                            Width="100" VerticalAlignment="Center" IsEnabled="False"
+                                            ValueChanged="SliderQuality_ValueChanged" Margin="0,0,4,0"/>
+                                    <TextBlock x:Name="txtManualQuality" Text="50%"
+                                               VerticalAlignment="Center" Style="{StaticResource AutumnBodyText}"/>
+                                </StackPanel>
+
+                                <!-- Image adjustments -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Brightness:" VerticalAlignment="Center"
+                                               Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
+                                    <Slider x:Name="sliderBrightness" Minimum="-100" Maximum="100" Value="0"
+                                            Width="90" VerticalAlignment="Center"
+                                            ValueChanged="SliderBrightness_ValueChanged" Margin="0,0,16,0"/>
+
+                                    <TextBlock Text="Contrast:" VerticalAlignment="Center"
+                                               Style="{StaticResource AutumnBodyText}" Margin="0,0,6,0"/>
+                                    <Slider x:Name="sliderContrast" Minimum="0.5" Maximum="2.0" Value="1.0"
+                                            Width="90" VerticalAlignment="Center"
+                                            ValueChanged="SliderContrast_ValueChanged" Margin="0,0,16,0"/>
+
+                                    <CheckBox x:Name="chkFlipH" Content="Flip Horizontal"
+                                              Checked="ChkFlipH_Changed" Unchecked="ChkFlipH_Changed"
+                                              VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <CheckBox x:Name="chkFlipV" Content="Flip Vertical"
+                                              Checked="ChkFlipV_Changed" Unchecked="ChkFlipV_Changed"
+                                              VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                    <CheckBox x:Name="chkMicrophone" Content="Microphone"
+                                              Checked="ChkMicrophone_Changed" Unchecked="ChkMicrophone_Changed"
+                                              IsChecked="True" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
                     </StackPanel>
                 </Border>
 
@@ -222,11 +232,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                            <Ellipse Width="12" Height="12" Fill="{StaticResource AutumnAccentBrush}"
-                                     Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Camera Preview" Style="{StaticResource AutumnHeaderText}"/>
-                        </StackPanel>
+                        <TextBlock Grid.Row="0" Text="Camera Preview"
+                                   Style="{StaticResource AutumnHeaderText}" Margin="0,0,0,10"/>
                         <Border Grid.Row="1" Style="{StaticResource AutumnVideoContainer}">
                             <Image x:Name="imgCamera" Stretch="Uniform" Margin="5"/>
                         </Border>
