@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using OpenCvSharp;
+using Server_StreamLAN.Models;
 using Server_StreamLAN.Services;
 using Server_StreamLAN.Utils;
 
@@ -101,7 +102,7 @@ namespace Server_StreamLAN.Views
                         if (bitmap != null)
                         {
                             bitmap.Freeze();
-                            Dispatcher.InvokeAsync(() => imgCamera.Source = bitmap);
+                            _ = Dispatcher.InvokeAsync(() => imgCamera.Source = bitmap);
                         }
                     }
                     catch (Exception) { /* keep loop alive */ }

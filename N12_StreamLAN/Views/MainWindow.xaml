@@ -207,31 +207,66 @@
                                             ValueChanged="SliderVolume_ValueChanged"/>
                                 </StackPanel>
                             </StackPanel>
-                            <!-- Video -->
-                            <Border Grid.Row="1" Style="{StaticResource AutumnVideoContainer}">
-                                <Image x:Name="imgCamera" Stretch="Uniform" Margin="5"/>
-                            </Border>
-                        </Grid>
-                    </Border>
+                        <!-- Camera Display -->
+                        <Border Grid.Row="1" Style="{StaticResource AutumnVideoContainer}">
+                            <Image x:Name="imgCamera" Stretch="Uniform" Margin="5"/>
+                        </Border>
+                    </Grid>
+                </Border>
 
-                    <!-- Client list sidebar -->
-                    <Border Grid.Column="1" Style="{StaticResource AutumnCardPanel}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="📡 Clients" Style="{StaticResource AutumnHeaderText}"
-                                       Margin="0,0,0,10"/>
-                            <ListBox x:Name="lbClients" Grid.Row="1"
-                                     SelectionChanged="LbClients_SelectionChanged"
-                                     Background="Transparent" BorderThickness="0"
-                                     Foreground="{StaticResource AutumnTextPrimaryBrush}"
-                                     FontSize="11" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
-                        </Grid>
-                    </Border>
-                </Grid>
+                <!-- Client sidebar -->
+                <Border Grid.Column="1" Style="{StaticResource AutumnCardPanel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                       Foreground="{StaticResource AutumnAccentBrush}"
+                                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Connected Clients"
+                                       Style="{StaticResource AutumnHeaderText}"/>
+                        </StackPanel>
+                        <ListBox x:Name="lbClients" Grid.Row="1"
+                                 Background="Transparent" BorderThickness="0"
+                                 SelectionChanged="LbClients_SelectionChanged">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Padding" Value="4,4"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource AutumnAccentBrush}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#3E2723"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2,2">
+                                        <TextBlock Text="{Binding EndPoint}"
+                                                   Foreground="{StaticResource AutumnAccentBrush}"
+                                                   FontWeight="SemiBold" FontSize="12"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="{Binding CurrentFps, StringFormat='FPS: {0:F0}'}"
+                                                       Foreground="#94a3b8" FontSize="11" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding PacketLossPercent, StringFormat='Loss: {0:F1}%'}"
+                                                       Foreground="#F59E0B" FontSize="11"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding LastSeen, StringFormat='Last: {0:HH:mm:ss}'}"
+                                                   Foreground="#64748b" FontSize="10" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
             </Grid>
+        </Grid>
         </Grid>
     </Border>
 </Window>
