@@ -2,10 +2,7 @@ using System;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Binary header prepended to every UDP packet.
-    /// Format: [4 bytes seqNo LE] [1 byte flags] [JPEG data...]
-    /// </summary>
+
     public static class PacketProtocol
     {
         public const int HeaderSize = 5;

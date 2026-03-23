@@ -11,7 +11,6 @@ namespace Client_StreamLAN.Services
 
         public bool IsRunning => _capture != null && _capture.IsOpened();
 
-        /// <summary>Scans camera indices 0‥4 and returns how many are available.</summary>
         public static int GetCameraCount()
         {
             int count = 0;
@@ -33,7 +32,6 @@ namespace Client_StreamLAN.Services
                 throw new Exception($"Không mở được camera {index}");
         }
 
-        /// <summary>Switch to a different camera while streaming.</summary>
         public void SwitchCamera(int index)
         {
             if (_currentIndex == index && IsRunning) return;

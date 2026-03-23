@@ -23,16 +23,12 @@ namespace Server_StreamLAN.Services
             _udp = new UdpClient(port);
         }
 
-        /// <summary>
-        /// Receives one frame. Parses the packet protocol header, tracks the sending
-        /// client session, and returns the raw JPEG bytes plus metadata.
-        /// </summary>
+ 
         public async Task<(IPEndPoint Sender, byte[] JpegData, uint SeqNo, byte Flags)> ReceiveAsync()
         {
             var result = await _udp.ReceiveAsync();
             var ep     = result.RemoteEndPoint;
 
-            // Parse header (backward-compatible: if no header, treat whole buffer as JPEG)
             byte[] jpeg;
             uint seqNo;
             byte flags;
@@ -43,12 +39,10 @@ namespace Server_StreamLAN.Services
                 flags = 0;
             }
 
-            // Update or create session
             string key = ep.ToString();
             var session = _clients.GetOrAdd(key, _ => new ClientSession(ep));
             session.RecordFrame(seqNo);
 
-            // Remove timed-out clients
             var stale = _clients
                 .Where(kv => DateTime.UtcNow - kv.Value.LastSeen > ClientTimeout)
                 .Select(kv => kv.Key)

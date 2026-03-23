@@ -4,9 +4,7 @@ using System.Windows;
 
 namespace Client_StreamLAN
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+
     public partial class App : Application
     {
     }

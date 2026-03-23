@@ -5,13 +5,8 @@ namespace Client_StreamLAN.Services
 {
     public enum StreamState { Stopped, Running, Paused, Reconnecting }
 
-    /// <summary>
-    /// Manages stream state and per-frame camera control settings.
-    /// The actual send loop lives in MainWindow; this class holds all shared config.
-    /// </summary>
     public class StreamController
     {
-        // ── State ──────────────────────────────────────────────────────────
         public StreamState State { get; private set; } = StreamState.Stopped;
         public bool IsRunning    => State == StreamState.Running;
         public bool IsPaused     => State == StreamState.Paused;
@@ -40,21 +35,16 @@ namespace Client_StreamLAN.Services
             StateChanged?.Invoke(s);
         }
 
-        // ── Stream settings ────────────────────────────────────────────────
         public Size Resolution    { get; set; } = new Size(640, 480);
-        public int  FrameDelayMs  { get; set; } = 33;   // ~30 fps
-        public int  ManualQuality { get; set; } = 50;   // 15-85
+        public int  FrameDelayMs  { get; set; } = 33;  
+        public int  ManualQuality { get; set; } = 50; 
         public bool UseAdaptive   { get; set; } = true;
 
-        // ── Camera controls ────────────────────────────────────────────────
         public bool   FlipH       { get; set; }
         public bool   FlipV       { get; set; }
-        public double Brightness  { get; set; } = 0;    // additive  -100..+100
-        public double Contrast    { get; set; } = 1.0;  // multiplier 0.5..2.0
+        public double Brightness  { get; set; } = 0;    
+        public double Contrast    { get; set; } = 1.0; 
 
-        /// <summary>
-        /// Apply brightness / contrast / flip to a frame (returns a new Mat — caller disposes).
-        /// </summary>
         public Mat ApplyControls(Mat src)
         {
             var dst = new Mat();

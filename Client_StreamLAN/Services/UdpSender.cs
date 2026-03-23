@@ -27,7 +27,6 @@ namespace Client_StreamLAN.Services
         public async Task SendAsync(byte[] data)
             => await _udp.SendAsync(data, data.Length, _endPoint);
 
-        /// <summary>Re-creates the internal socket (call after a network error).</summary>
         public void Reconnect()
         {
             try { _udp.Close(); _udp.Dispose(); } catch { }

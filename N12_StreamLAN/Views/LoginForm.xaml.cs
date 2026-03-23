@@ -38,7 +38,6 @@ namespace Server_StreamLAN.Views
 
         private async void BtnGoogle_Click(object? sender, RoutedEventArgs e)
         {
-            // Reused button: perform Supabase email/password auth using the fields
             try
             {
                 string user = txt_Username.Text.Trim();

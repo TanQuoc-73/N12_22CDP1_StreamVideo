@@ -10,12 +10,7 @@ using System.Threading.Tasks;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Simple server-side authentication service.
-    /// Currently uses an in-memory admin account read from environment variables
-    /// `SERVER_ADMIN_USER` and `SERVER_ADMIN_PWD` with defaults `admin` / `admin123`.
-    /// Replace or extend to use a proper user store (database, LDAP, etc.).
-    /// </summary>
+
     public class ServerAuthService
     {
         private readonly Dictionary<string, string> _users = new();
@@ -35,13 +30,10 @@ namespace Server_StreamLAN.Services
             return _users.TryGetValue(username, out var pwd) && pwd == password;
         }
 
-        // Authenticate via Supabase password grant (email + password).
-        // Returns (ok, email) on success.
         public async Task<(bool ok, string? email)> AuthenticateWithSupabaseAsync(string email, string password)
         {
             string supabaseUrl = Environment.GetEnvironmentVariable("SERVER_SUPABASE_URL") ?? "https://spuuejvuiuubrddlzqxa.supabase.co";
 
-            // Prefer anon key for password grant; fallback to service role if provided.
             string apiKey = Environment.GetEnvironmentVariable("SERVER_SUPABASE_ANON_KEY") ?? Environment.GetEnvironmentVariable("SERVER_SUPABASE_SERVICE_ROLE") ?? string.Empty;
             if (string.IsNullOrEmpty(apiKey))
                 throw new InvalidOperationException("Missing Supabase API key. Set SERVER_SUPABASE_ANON_KEY or SERVER_SUPABASE_SERVICE_ROLE.");

@@ -3,9 +3,7 @@ using System.Net;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Tracks state for a single streaming client.
-    /// </summary>
+
     public class ClientSession
     {
         public IPEndPoint EndPoint    { get; }
@@ -14,7 +12,6 @@ namespace Server_StreamLAN.Services
         public uint       LastSeqNo   { get; set; }
         public int        PacketLostCount { get; set; }
 
-        // FPS tracking
         private DateTime _lastFpsMark = DateTime.UtcNow;
         private int _framesSinceMark;
         public double CurrentFps { get; private set; }

@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Lightweight UDP listener on port 9002 dedicated to receiving audio packets.
-    /// Unpacks each packet via PacketProtocol and feeds the PCM data to AudioPlaybackService.
-    /// </summary>
+
     public class UdpAudioReceiver : IDisposable
     {
         private readonly UdpClient _udp;
@@ -23,7 +20,6 @@ namespace Server_StreamLAN.Services
             _udp      = new UdpClient(AudioPort);
         }
 
-        /// <summary>Starts the background receive loop.</summary>
         public void Start()
         {
             _cts?.Cancel();
@@ -45,7 +41,7 @@ namespace Server_StreamLAN.Services
                         }
                     }
                     catch (OperationCanceledException) { break; }
-                    catch { /* keep loop alive */ }
+                    catch {}
                 }
             }, ct);
         }

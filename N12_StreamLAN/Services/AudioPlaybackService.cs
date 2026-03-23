@@ -3,17 +3,13 @@ using System;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Plays incoming PCM audio through the default speakers using NAudio.
-    /// Uses a BufferedWaveProvider ring buffer fed by the UDP receiver.
-    /// </summary>
+
     public class AudioPlaybackService : IDisposable
     {
         private WaveOutEvent?        _waveOut;
         private BufferedWaveProvider? _buffer;
         private volatile bool        _muted;
 
-        /// <summary>Must match the client's AudioCaptureService.AudioFormat.</summary>
         public static readonly WaveFormat AudioFormat = new(16000, 16, 1);
 
         public bool IsMuted
@@ -39,7 +35,6 @@ namespace Server_StreamLAN.Services
             }
         }
 
-        /// <summary>Initializes the playback device. Call once at startup.</summary>
         public void Start()
         {
             Stop();
@@ -47,27 +42,25 @@ namespace Server_StreamLAN.Services
             _buffer = new BufferedWaveProvider(AudioFormat)
             {
                 BufferDuration        = TimeSpan.FromSeconds(2),
-                DiscardOnBufferOverflow = true   // drop old audio if buffer fills up
+                DiscardOnBufferOverflow = true 
             };
 
             _waveOut = new WaveOutEvent
             {
-                DesiredLatency = 100  // ms — low latency playback
+                DesiredLatency = 100 
             };
             _waveOut.Init(_buffer);
             _waveOut.Volume = _muted ? 0f : _volume;
             _waveOut.Play();
         }
 
-        /// <summary>Feeds a chunk of raw PCM data into the playback buffer.</summary>
         public void AddSamples(byte[] pcmData, int offset, int count)
         {
             if (_buffer == null || _muted) return;
             try { _buffer.AddSamples(pcmData, offset, count); }
-            catch { /* buffer overflow already handled by DiscardOnBufferOverflow */ }
+            catch { }
         }
 
-        /// <summary>Stops playback and releases resources.</summary>
         public void Stop()
         {
             if (_waveOut != null)

@@ -4,26 +4,22 @@ using OpenCvSharp;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Writes video frames to disk using VideoWriter. Saves to Captures folder with timestamp-based filenames.
-    /// </summary>
+
     public class RecordingService
     {
         private readonly object _lock = new();
         private VideoWriter? _writer;
         private string? _currentPath;
         private OpenCvSharp.Size _frameSize;
-        private bool _isRecording; // true from Start() until Stop() so UI "Stop" works even before first frame
+        private bool _isRecording; 
         private const double DefaultFps = 25.0;
         private const string CapturesFolder = "Captures";
         private static readonly int FourCcMp4 = FourCC.FromString("mp4v");
 
-        /// <summary>True from Start() until Stop(), so Stop button is correct even before first frame.</summary>
         public bool IsRecording => _isRecording;
 
         public string? CurrentRecordingPath => _currentPath;
 
-        /// <summary>Starts a new recording. Frame size is taken from the first frame written.</summary>
         public void Start()
         {
             lock (_lock)
@@ -38,7 +34,6 @@ namespace Server_StreamLAN.Services
             }
         }
 
-        /// <summary>Writes a frame. Initializes VideoWriter on first frame.</summary>
         public void WriteFrame(Mat frame)
         {
             if (frame == null || frame.Empty()) return;
@@ -74,12 +69,11 @@ namespace Server_StreamLAN.Services
                 }
                 catch
                 {
-                    // Ignore write errors to keep stream stable
+                  
                 }
             }
         }
 
-        /// <summary>Stops recording and releases the writer so the file is saved and closed.</summary>
         public void Stop()
         {
             lock (_lock)

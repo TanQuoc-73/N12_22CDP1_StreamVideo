@@ -19,16 +19,13 @@ namespace Client_StreamLAN.Services
 
             byte[] msg = Encoding.UTF8.GetBytes("DISCOVER_SERVER");
 
-            // Gửi tới loopback (phát hiện server cùng máy)
             try { await udp.SendAsync(msg, msg.Length, new IPEndPoint(IPAddress.Loopback, 9001)); } catch { }
 
-            // Gửi broadcast từng interface (tránh bị chặn trên hotspot)
             foreach (var addr in GetSubnetBroadcastAddresses())
             {
                 try { await udp.SendAsync(msg, msg.Length, new IPEndPoint(addr, 9001)); } catch { }
             }
 
-            // Fallback: broadcast toàn mạng
             try { await udp.SendAsync(msg, msg.Length, new IPEndPoint(IPAddress.Broadcast, 9001)); } catch { }
 
             var start = DateTime.Now;
@@ -64,12 +61,10 @@ namespace Client_StreamLAN.Services
             return DeduplicateAndRank(raw);
         }
 
-        // Dedup theo tên server, ưu tiên IP cùng subnet LAN, bỏ loopback và IP public
         private static List<ServerInfo> DeduplicateAndRank(List<ServerInfo> raw)
         {
             var localPrivate = GetLocalPrivateAddresses().ToList();
 
-            // Lọc bỏ public IP (không phải private RFC1918) trừ khi chỉ có IP đó
             bool IsPrivate(string ip) =>
                 IPAddress.TryParse(ip, out var addr) &&
                 (ip.StartsWith("10.") ||
@@ -79,8 +74,7 @@ namespace Client_StreamLAN.Services
 
             int Score(ServerInfo s)
             {
-                if (s.Ip == "127.0.0.1") return 3; // loopback cuối cùng
-                // Cùng subnet với local interface → ưu tiên cao nhất
+                if (s.Ip == "127.0.0.1") return 3; 
                 foreach (var (localIp, mask) in localPrivate)
                 {
                     if (SameSubnet(s.Ip, localIp, mask)) return 0;
@@ -90,10 +84,10 @@ namespace Client_StreamLAN.Services
             }
 
             return raw
-                .Where(s => IsPrivate(s.Ip))          // bỏ public IP
+                .Where(s => IsPrivate(s.Ip))         
                 .OrderBy(s => Score(s))
-                .GroupBy(s => s.Name)                  // dedup theo tên server
-                .Select(g => g.First())                // giữ IP tốt nhất
+                .GroupBy(s => s.Name)                 
+                .Select(g => g.First())                
                 .ToList();
         }
 

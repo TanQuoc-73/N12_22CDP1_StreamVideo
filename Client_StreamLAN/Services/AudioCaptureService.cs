@@ -4,11 +4,7 @@ using System.Threading;
 
 namespace Client_StreamLAN.Services
 {
-    /// <summary>
-    /// Captures microphone audio using NAudio and sends PCM packets
-    /// to the server over a dedicated UDP channel (port 9002).
-    /// Format: 16 kHz, 16-bit, mono — good voice quality at low bandwidth.
-    /// </summary>
+
     public class AudioCaptureService : IDisposable
     {
         private WaveInEvent? _waveIn;
@@ -19,19 +15,14 @@ namespace Client_StreamLAN.Services
         public static readonly WaveFormat AudioFormat = new(16000, 16, 1);
         public const int AudioPort = 9002;
 
-        /// <summary>Whether audio capture is currently active.</summary>
         public bool IsCapturing => _waveIn != null;
 
-        /// <summary>Enable/disable sending audio (mic mute on client side).</summary>
         public bool Enabled
         {
             get => _enabled;
             set => _enabled = value;
         }
 
-        /// <summary>
-        /// Starts capturing from the default microphone and sending to the given server.
-        /// </summary>
         public void Start(string serverIp)
         {
             Stop();
@@ -42,7 +33,7 @@ namespace Client_StreamLAN.Services
             _waveIn = new WaveInEvent
             {
                 WaveFormat       = AudioFormat,
-                BufferMilliseconds = 40  // 40 ms chunks → ~1280 bytes per chunk (fits in UDP)
+                BufferMilliseconds = 40 
             };
 
             _waveIn.DataAvailable += OnDataAvailable;
@@ -50,7 +41,6 @@ namespace Client_StreamLAN.Services
             _enabled = true;
         }
 
-        /// <summary>Stops capturing and releases resources.</summary>
         public void Stop()
         {
             _enabled = false;
@@ -78,13 +68,11 @@ namespace Client_StreamLAN.Services
                     PacketProtocol.FlagAudio,
                     e.Buffer.AsSpan(0, e.BytesRecorded).ToArray());
 
-                // Only send if packet fits in a single UDP datagram
                 if (packet.Length < 65_000)
                     _sender.Send(packet);
             }
             catch
             {
-                // Swallow send errors — audio is best-effort
             }
         }
 

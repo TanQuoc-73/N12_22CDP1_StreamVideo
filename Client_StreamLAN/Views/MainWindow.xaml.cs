@@ -17,25 +17,21 @@ namespace Client_StreamLAN.Views
 {
     public partial class MainWindow : System.Windows.Window
     {
-        // ── Services ───────────────────────────────────────────────────────
         private readonly CameraService          _camera     = new();
         private readonly StreamController       _controller = new();
         private readonly AdaptiveBitrateController _adaptive = new();
         private UdpSender?                      _sender;
         private readonly AudioCaptureService    _audioCapture = new();
 
-        // ── Stream loop ────────────────────────────────────────────────────
         private CancellationTokenSource? _cts;
         private uint  _seqNo;
         private int   _frameCount;
         private DateTime _fpsTimer = DateTime.UtcNow;
 
-        // ── Auto-reconnect ─────────────────────────────────────────────────
         private int  _sendFailCount;
         private bool _reconnecting;
         private const int MaxFails = 5;
 
-        // ── Resolution map ─────────────────────────────────────────────────
         private static readonly Dictionary<string, OpenCvSharp.Size> Resolutions = new()
         {
             { "320×240",  new OpenCvSharp.Size(320,  240)  },
@@ -44,7 +40,6 @@ namespace Client_StreamLAN.Views
             { "1280×720", new OpenCvSharp.Size(1280, 720)  },
         };
 
-        // ──────────────────────────────────────────────────────────────────
         public MainWindow()
         {
             InitializeComponent();
@@ -54,20 +49,17 @@ namespace Client_StreamLAN.Views
             txtLocalIp.Text    = NetworkInfo.GetLocalIPv4() ?? "Unavailable";
             txtUserEmail.Text  = "User: TEST_MODE";
 
-            // Populate combos
             cbResolution.ItemsSource   = Resolutions.Keys.ToList();
-            cbResolution.SelectedIndex = 1; // 640×480
+            cbResolution.SelectedIndex = 1;
 
             int camCount = CameraService.GetCameraCount();
             cbCamera.ItemsSource   = Enumerable.Range(0, camCount).Select(i => $"Camera {i}").ToList();
             cbCamera.SelectedIndex = 0;
 
-            // Try to open default camera
             try { _camera.Start(0); }
-            catch { /* no camera yet */ }
+            catch {}
         }
 
-        // ── Stream control ─────────────────────────────────────────────────
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             if (_sender == null)
@@ -82,11 +74,10 @@ namespace Client_StreamLAN.Views
             _controller.Start();
             _ = Task.Run(() => StreamLoopAsync(_cts.Token));
 
-            // Start audio capture if microphone is enabled
             if (chkMicrophone.IsChecked == true && _sender != null)
             {
                 try { _audioCapture.Start(_sender.ServerIp); }
-                catch { /* no microphone available */ }
+                catch { }
             }
         }
 
@@ -134,7 +125,6 @@ namespace Client_StreamLAN.Views
             });
         }
 
-        // ── Send loop ──────────────────────────────────────────────────────
         private async Task StreamLoopAsync(CancellationToken ct)
         {
             while (!ct.IsCancellationRequested)
@@ -182,7 +172,6 @@ namespace Client_StreamLAN.Views
                     bitmap?.Freeze();
                     Dispatcher.InvokeAsync(() => imgCamera.Source = bitmap);
 
-                    // FPS counter (update every second)
                     _frameCount++;
                     double elapsed = (DateTime.UtcNow - _fpsTimer).TotalSeconds;
                     if (elapsed >= 1.0)
@@ -204,7 +193,6 @@ namespace Client_StreamLAN.Views
             }
         }
 
-        // ── Auto-reconnect ─────────────────────────────────────────────────
         private async Task ReconnectAsync(CancellationToken ct)
         {
             _reconnecting = true;
@@ -224,15 +212,14 @@ namespace Client_StreamLAN.Views
                     _controller.Resume();
                     break;
                 }
-                catch { /* retry */ }
+                catch { }
             }
         }
 
-        // ── Camera controls ────────────────────────────────────────────────
         private void CbCamera_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try { _camera.SwitchCamera(cbCamera.SelectedIndex); }
-            catch { /* camera not available */ }
+            catch { }
         }
 
         private void CbResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -273,7 +260,6 @@ namespace Client_StreamLAN.Views
                 _audioCapture.Enabled = enabled;
         }
 
-        // ── Server connection ──────────────────────────────────────────────
         private async void BtnDiscover_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -324,7 +310,6 @@ namespace Client_StreamLAN.Views
             catch (Exception ex) { MessageBox.Show($"Lỗi kết nối: {ex.Message}"); }
         }
 
-        // ── Window chrome ──────────────────────────────────────────────────
         protected override void OnClosed(EventArgs e)
         {
             _cts?.Cancel();

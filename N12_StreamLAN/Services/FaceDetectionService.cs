@@ -4,17 +4,13 @@ using OpenCvSharp;
 
 namespace Server_StreamLAN.Services
 {
-    /// <summary>
-    /// Loads Haar Cascade and detects faces in frames, drawing bounding boxes.
-    /// Requires haarcascade_frontalface_default.xml in Data folder or executable directory.
-    /// </summary>
+
     public class FaceDetectionService
     {
         private CascadeClassifier? _faceCascade;
         private static readonly Scalar GreenColor = new(0, 255, 0);
         private const int BoxThickness = 2;
 
-        /// <summary>Whether the cascade loaded successfully and detection is available.</summary>
         public bool IsAvailable => _faceCascade != null;
 
         public FaceDetectionService()
@@ -48,9 +44,6 @@ namespace Server_StreamLAN.Services
             }
         }
 
-        /// <summary>
-        /// Detects faces in the frame and draws green rectangles around them (in-place).
-        /// </summary>
         public void DetectAndDraw(Mat frame)
         {
             if (_faceCascade == null || frame.Empty()) return;
@@ -68,7 +61,7 @@ namespace Server_StreamLAN.Services
             }
             catch
             {
-                // Ignore detection errors (e.g. frame size) to keep stream stable
+        
             }
         }
 
